@@ -39,6 +39,14 @@ class AccountsView extends StackedView<AccountsViewModel> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.all(24),
                         children: [
+                          if (viewModel.errorMessage != null) ...[
+                            _ErrorBanner(message: viewModel.errorMessage!),
+                            TextButton.icon(
+                              onPressed: viewModel.loadAccounts,
+                              icon: const Icon(Icons.refresh),
+                              label: const Text('Try again'),
+                            ),
+                          ],
                           const SizedBox(height: 100),
                           Icon(
                             Icons.account_balance_wallet_outlined,
