@@ -135,7 +135,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
 - ☐ Android release build verification
-- ☒ GitHub Actions passes dependency resolution, Drift/Stacked code generation, analysis, all 15 tests, and Android debug APK build
+- ☒ GitHub Actions passes dependency resolution, Drift/Stacked code generation, analysis, all 17 tests, and Android debug APK build
 
 ### Deployment and Release
 - ☐ App identity, icon, and version configuration
@@ -301,7 +301,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Added account editing and archive confirmation; archived accounts and their historical balances remain visible, while archived accounts cannot accept new transactions.
 - Added loading, empty, error, and retry states. Added the Accounts route to Stacked configuration/router and a dashboard entry point.
 - Added four ViewModel tests for loading balances, create/update, archive/history preservation, and validation errors; expanded widget test to verify navigation and account form fields.
-- CI run `45888645681` on source commit `0d5a4f9e1f79a5c5383e1c2aaaf7562743cbc96a` passed code generation, `flutter analyze`, all 15 tests, and Android debug APK build. Full account list-state behavior still needs broader widget coverage.
+- CI run `45889491252` on source commit `d2339d52c5c31929e6cb91bea82a47fbc1187175` passed code generation, `flutter analyze`, all 17 tests, and Android debug APK build. Widget tests use an in-memory Drift database to verify account list balances, creation, and archive behavior.
 
 ### 2026-11-27 — M4 repository foundation
 - Expanded `LocalFinanceRepository` with account create/update/archive operations, sorted account queries, and account balance calculation from opening balance plus income/expense transactions.
@@ -370,7 +370,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 **Git:** Initial README commit: afac94f5d0a3a386d5f0f4dfc834a25c955b0c8d.
 
 ## Pending Work
-- Expand account screen widget coverage for populated, archived, and database-error states.
+- Expand account screen widget coverage for database-error and retry states.
 - Add transaction ViewModels/screens and their widget/navigation tests.
 - Add category and tag management UI.
 - Add schema-upgrade migration tests when a future schema version introduces an actual migration path.
@@ -411,7 +411,7 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
-| 2026-11-27 | M4 — Account UI and ViewModel | Added Stacked accounts screen, create/edit/archive form, dashboard route, loading/error/empty/retry states, and four ViewModel tests | `flutter analyze` passed; 15 tests passed; Android debug APK built | `0d5a4f9e1f79a5c5383e1c2aaaf7562743cbc96a` (validated run `45888645681`) |
+| 2026-11-27 | M4 — Account UI and ViewModel | Added Stacked accounts screen, create/edit/archive form, dashboard route, loading/error/empty/retry states, four ViewModel tests, and account screen widget coverage | `flutter analyze` passed; 17 tests passed; Android debug APK built | `d2339d52c5c31929e6cb91bea82a47fbc1187175` (validated run `45889491252`) |
 | 2026-11-27 | M4 — Account and transaction repository | Added account/category/tag/transaction operations, balance calculations, validation, tag links, and soft deletion | `flutter analyze` passed; 11 tests passed; Android debug APK built | `d0c057df038d56b482759052d5a2e7c8b0d45603` (validated run `45884874572`) |
 | 2026-11-27 | M2/M3 — Android and database validation | Set application ID/display name; upgraded Android Gradle Plugin and Gradle wrapper; fixed manifest XML; added foreign-key and cascade tests; CI debug APK build | `flutter analyze` passed; 7 tests passed; `flutter build apk --debug` passed | `73175434a04e7b7483af8938c3f7864bc2e19859` (validated run `45882661936`) |
 | 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed repository construction, analyzer issues, MaterialApp route handler, and widget-test locator setup | `flutter analyze` passed; all 4 tests passed on corrected run `45880105913` | `975b7715ec29533a2b512f7fe038ea377f780596` |
