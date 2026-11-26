@@ -86,17 +86,17 @@ The initial Flutter application foundation is now committed. Product features an
 - ☐ Premium feature presentation and entitlement checks
 
 ### Local Database
-- ☐ Drift database setup and schema versioning
-- ☐ Accounts table
-- ☐ Categories table
-- ☐ Tags table and transaction-tag join table
-- ☐ Transactions table
-- ☐ Budgets table
-- ☐ Recurring transaction definitions
-- ☐ Database indexes and foreign-key constraints
+- [~] Drift database setup and schema version 1 added; code generation and runtime verification pending
+- [~] Accounts table
+- [~] Categories table
+- [~] Tags table and transaction-tag join table
+- [~] Transactions table
+- [~] Budgets table
+- [~] Recurring transaction definitions
+- [~] Transaction query indexes and foreign-key constraints defined
 - ☐ Atomic transaction workflows for financial mutations
-- ☐ Database migration tests
-- ☐ Backup/sync-ready stable identifiers and metadata
+- [~] Initial database widget/unit test file added; not executed
+- [~] Stable UUID identifiers and created/updated/deleted metadata included in schema
 
 ### Backend APIs
 - ☐ Not applicable to core offline release
@@ -195,18 +195,18 @@ This adapts the reference's app, models, services, and ui/views organization whi
 
 ## Local Data Model
 
-The following is the initial logical schema. Exact Drift column types, nullability, indexes, and migrations will be finalized during implementation.
+The initial Drift schema is now defined in `lib/database/tables/`. Schema version is 1. Drift-generated code is intentionally not committed yet; run the code-generation command after dependency resolution. Date/time columns are configured for ISO-8601 text storage in `build.yaml`.
 
 | Table | Main fields / purpose |
 |---|---|
-| accounts | Stable ID, name, type, opening balance, currency code, archived state, timestamps |
-| categories | Stable ID, name, transaction type, icon/color metadata, built-in/custom flag |
-| transactions | Stable ID, account ID, category ID, type, amount, currency code, note, transaction date, timestamps |
-| tags | Stable ID, name, color metadata |
-| transaction_tags | Transaction ID and tag ID; unique pair |
-| budgets | Stable ID, category or overall scope, amount, period type, start/end dates, timestamps |
-| recurring_transactions | Stable ID, account/category references, amount, frequency, next due date, active state |
-| app_preferences | Non-financial local preferences where appropriate |
+| accounts | `id` (UUID text PK), name, account type, ISO currency code, opening balance in minor units, archived flag, created/updated timestamps |
+| categories | `id` (UUID text PK), name, transaction type, optional icon/color metadata, built-in flag; unique name + transaction type |
+| transactions | `id` (UUID text PK), account/category foreign keys, type, positive amount in minor units, currency code, optional note, transaction date, created/updated/deleted timestamps |
+| tags | `id` (UUID text PK), unique name, optional color metadata, created timestamp |
+| transaction_tags | Transaction and tag foreign keys; composite primary key prevents duplicate tag assignment |
+| budgets | `id` (UUID text PK), optional category FK, amount in minor units, currency, period type, start/end dates, timestamps |
+| recurring_transactions | `id` (UUID text PK), account/category references, type, amount in minor units, currency, frequency, next due date, timezone ID, active state, timestamps |
+| app_preferences | Preference key (text PK), value, updated timestamp |
 
 ### Data Integrity Rules
 - Store monetary values as integer minor units (cents/paisa), not floating-point values.
@@ -218,6 +218,17 @@ The following is the initial logical schema. Exact Drift column types, nullabili
 - Keep timestamps and soft-delete/sync metadata extensible for future synchronization.
 - Define recurring schedules with explicit timezone and due-date rules before automation.
 - Never store app-lock secrets as plaintext. Select secure platform-backed storage during the app-lock milestone.
+
+### Implemented Database Files
+
+- `lib/database/app_database.dart` — Drift database, schema version 1, database opening, and foreign-key activation.
+- `lib/database/tables/` — eight table definitions: accounts, categories, transactions, tags, transaction_tags, budgets, recurring_transactions, and app_preferences.
+- `lib/repositories/local_finance_repository.dart` — initial local account/category/transaction create and account read/watch operations.
+- `lib/app/app.locator.dart` and `lib/app/app.dart` — database and repository dependency registration.
+- `test/database/app_database_test.dart` — initial in-memory database tests (added, not yet run).
+- `build.yaml` — stores Drift date/time values as ISO-8601 text.
+
+Transaction indexes cover account/date and category/date query patterns. Foreign-key enforcement is enabled when the database opens. Financial amounts use integer minor units; no floating-point money fields are used.
 
 ### Core Relationships
 - One account has many transactions.
@@ -254,7 +265,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 |---|---|---|---|
 | Repository setup | [~] Flutter source foundation committed; Android platform shell pending | N/A | ☐ Pending |
 | Architecture and planning | [~] Documented; initial Stacked app structure committed | N/A | N/A |
-| Local database | ☐ Pending | N/A | ☐ Pending |
+| Local database | [~] Schema v1 and repository starter implemented; code generation pending | N/A | [~] Tests added, not run |
 | Transactions | ☐ Pending | N/A | ☐ Pending |
 | Categories and tags | ☐ Pending | N/A | ☐ Pending |
 | Accounts and balances | ☐ Pending | N/A | ☐ Pending |
@@ -269,7 +280,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 1. **M1 — Repository analysis and project planning:** inspect references and target repository; document architecture, scope, data model, and roadmap.
 2. **M2 — Flutter project foundation:** [~] add project manifest, analyzer rules, Stacked app setup, routing, locator, theme, and initial dashboard. Flutter SDK validation and native Android platform generation remain pending.
-3. **M3 — Local database foundation:** configure Drift, initial schema, migrations, repositories, and database tests.
+3. **M3 — Local database foundation:** [~] configure Drift dependencies, schema v1, eight table definitions, foreign keys, transaction indexes, repository starter methods, and in-memory tests. Code generation, runtime tests, and migration verification remain pending.
 4. **M4 — Accounts and transaction management:** implement account, income, expense, category, tag, and transaction flows.
 5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
 6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
@@ -278,6 +289,20 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-26 — M3 initial local database implementation
+- Added Drift and drift_flutter runtime dependencies, drift_dev code-generation dependency, and UUID generation.
+- Added eight Drift tables for accounts, categories, transactions, tags, transaction-tag links, budgets, recurring transaction definitions, and app preferences.
+- Added schema version 1 and enabled SQLite foreign-key enforcement on database open.
+- Added indexes for transaction lookups by account/date and category/date.
+- Configured Drift to store date/time values as ISO-8601 text.
+- Added a local repository with account creation/list/watch, category creation, and transaction creation; transaction amounts must be positive integer minor units.
+- Registered the database and repository in the Stacked service locator.
+- Added in-memory database tests for account persistence and transaction amount validation.
+
+**Tests:** Not run. Flutter and Dart SDK executables are unavailable in the execution environment. Drift/Stacked code generation, dependency resolution, analyzer, database tests, and migration behavior remain unverified.
+
+**Git:** Initial M3 implementation committed file-by-file; latest M3 source/config commit: `0224ea8ba36f66e69f3caa6574345ebd1e7d1d15`.
 
 ### 2026-11-26 — M2 initial Flutter source foundation
 - Added `pubspec.yaml` with Flutter, Stacked, Stacked Services, build_runner, and Stacked generator dependencies, following the reference repository's package conventions.
@@ -304,6 +329,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 ## Pending Work
 - Generate the native Android project scaffold using Flutter tooling and verify Android application identifiers/build configuration.
+- Run Drift/Stacked code generation and resolve any generated-code or dependency compatibility errors.
+- Execute database tests, verify foreign-key behavior, and add tested migration coverage.
 - Run `flutter pub get`, Stacked code generation, `flutter analyze`, and widget tests in a Flutter-enabled environment; fix any compatibility issues found.
 - Add Drift database and migration tests.
 - Implement all planned local-first features.
@@ -317,7 +344,17 @@ No APIs are required for the core offline application. Future backup/sync endpoi
 
 ## Installation and Setup
 
-The repository is currently in its planning stage. Flutter setup and run instructions will be added after the Flutter project scaffold and dependency versions are committed.
+### Flutter application
+
+1. Install Flutter and Android toolchain compatible with Dart SDK `>=3.4.0 <4.0.0`.
+2. From the repository root, run `flutter pub get`.
+3. Generate Stacked and Drift code with `dart run build_runner build --delete-conflicting-outputs`.
+4. Run static analysis with `flutter analyze`.
+5. Run tests with `flutter test`.
+6. Generate the native Android platform scaffold if it is not present: `flutter create . --platforms=android`.
+7. Launch on an Android device/emulator with `flutter run`.
+
+The Drift database is stored in the app's application documents directory as `personal_finance.sqlite`. Core data access does not require network connectivity. No backend environment variables or API credentials are required.
 
 ## Database Documentation
 
