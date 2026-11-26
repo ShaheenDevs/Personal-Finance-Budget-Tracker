@@ -185,27 +185,27 @@ class LocalFinanceRepository {
 
   Stream<List<FinanceTransaction>> watchTransactions({String? accountId}) {
     final query = _database.select(_database.transactions)
-      ..where((row) => row.deletedAt.isNull())
+      ..where(
+        (row) => row.deletedAt.isNull() &
+            (accountId == null ? const Constant(true) : row.accountId.equals(accountId)),
+      )
       ..orderBy([
         (row) => OrderingTerm.desc(row.transactionDate),
         (row) => OrderingTerm.desc(row.createdAt),
       ]);
-    if (accountId != null) {
-      query.where((row) => row.accountId.equals(accountId));
-    }
     return query.watch();
   }
 
   Future<List<FinanceTransaction>> getTransactions({String? accountId}) {
     final query = _database.select(_database.transactions)
-      ..where((row) => row.deletedAt.isNull())
+      ..where(
+        (row) => row.deletedAt.isNull() &
+            (accountId == null ? const Constant(true) : row.accountId.equals(accountId)),
+      )
       ..orderBy([
         (row) => OrderingTerm.desc(row.transactionDate),
         (row) => OrderingTerm.desc(row.createdAt),
       ]);
-    if (accountId != null) {
-      query.where((row) => row.accountId.equals(accountId));
-    }
     return query.get();
   }
 
