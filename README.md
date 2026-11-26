@@ -42,7 +42,7 @@ Status definitions:
 - ☐ Pending
 - [!] Blocked or requires a decision
 
-All application features below are pending implementation.
+The initial Flutter application foundation is now committed. Product features and data workflows remain pending implementation and testing.
 
 ### Core Features
 - ☐ Income transaction creation, editing, deletion, and listing
@@ -252,8 +252,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 | Workstream | Flutter | Backend | Testing |
 |---|---|---|---|
-| Repository setup | ☐ Pending | N/A | ☐ Pending |
-| Architecture and planning | [~] Documented | N/A | N/A |
+| Repository setup | [~] Flutter source foundation committed; Android platform shell pending | N/A | ☐ Pending |
+| Architecture and planning | [~] Documented; initial Stacked app structure committed | N/A | N/A |
 | Local database | ☐ Pending | N/A | ☐ Pending |
 | Transactions | ☐ Pending | N/A | ☐ Pending |
 | Categories and tags | ☐ Pending | N/A | ☐ Pending |
@@ -268,7 +268,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 ## Milestones
 
 1. **M1 — Repository analysis and project planning:** inspect references and target repository; document architecture, scope, data model, and roadmap.
-2. **M2 — Flutter project foundation:** initialize Flutter project, dependencies, Stacked app setup, routing, locator, and shared UI foundation.
+2. **M2 — Flutter project foundation:** [~] add project manifest, analyzer rules, Stacked app setup, routing, locator, theme, and initial dashboard. Flutter SDK validation and native Android platform generation remain pending.
 3. **M3 — Local database foundation:** configure Drift, initial schema, migrations, repositories, and database tests.
 4. **M4 — Accounts and transaction management:** implement account, income, expense, category, tag, and transaction flows.
 5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
@@ -278,6 +278,18 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-26 — M2 initial Flutter source foundation
+- Added `pubspec.yaml` with Flutter, Stacked, Stacked Services, build_runner, and Stacked generator dependencies, following the reference repository's package conventions.
+- Added `.gitignore` and `analysis_options.yaml`.
+- Added the application entry point, Stacked locator configuration, route configuration, and `@StackedApp` configuration source.
+- Added a shared Material 3 theme and the initial Dashboard View/ViewModel using `StackedView` and `BaseViewModel`.
+- Added an initial widget test for the dashboard.
+- Native Android/iOS platform folders and generated build artifacts have not been created in this environment.
+
+**Tests:** Not run. Flutter and Dart SDK executables are not installed in the available execution environment; dependency resolution, code generation, analyzer, widget tests, and Android build remain unverified.
+
+**Git:** Foundation files were pushed directly to `main` in individual file commits; latest foundation commit: `9dfa071a7f662cb20c896cc6db0ab9b0e20e8bf0`.
 
 ### 2026-11-26 — Initial repository analysis and planning
 - Confirmed the Flutter reference repository and inspected its project tree, dependencies, app bootstrap, Stacked locator, ViewModel, View, and API service patterns.
@@ -290,7 +302,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 **Git:** Initial README commit: afac94f5d0a3a386d5f0f4dfc834a25c955b0c8d.
 
 ## Pending Work
-- Create the Flutter application foundation in this repository.
+- Generate the native Android project scaffold using Flutter tooling and verify Android application identifiers/build configuration.
+- Run `flutter pub get`, Stacked code generation, `flutter analyze`, and widget tests in a Flutter-enabled environment; fix any compatibility issues found.
 - Add Drift database and migration tests.
 - Implement all planned local-first features.
 - Confirm free-tier account allowance before enforcing an account cap.
@@ -319,4 +332,5 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
-| 2026-11-26 | M1 — Planning | Initial README, architecture plan, feature checklist, logical data model | Not applicable; no app code | To be recorded after commit |
+| 2026-11-26 | M1 — Planning | Initial README, architecture plan, feature checklist, logical data model | Not applicable; no app code | `826ab3e01eadb647bbe1313093edd9527b40e913` |
+| 2026-11-26 | M2 — Initial Flutter source foundation | Flutter manifest, lint config, app bootstrap, Stacked locator/router config, theme, dashboard, widget test, ignore rules | Not run: Flutter/Dart SDK unavailable | `9dfa071a7f662cb20c896cc6db0ab9b0e20e8bf0` (latest file commit)
