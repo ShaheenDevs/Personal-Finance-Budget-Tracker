@@ -24,9 +24,9 @@ void main() {
     expect(find.text('Your financial overview starts here'), findsOneWidget);
 
     await tester.tap(find.text('Manage accounts'));
-    await pumpUntilFound(tester, find.text('Accounts'));
+    await pumpUntilFound(tester, find.text('No accounts yet'));
 
-    expect(find.text('No accounts yet'), findsOneWidget);
+    expect(find.text('Accounts'), findsOneWidget);
 
     await tester.tap(find.text('Add account'));
     await tester.pump();
