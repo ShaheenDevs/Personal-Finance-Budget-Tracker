@@ -287,7 +287,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 **Tests:** No application code exists yet; no Flutter or backend tests were run.
 
-**Git:** Initial planning commit will be recorded here after the README is committed.
+**Git:** Initial README commit: afac94f5d0a3a386d5f0f4dfc834a25c955b0c8d.
 
 ## Pending Work
 - Create the Flutter application foundation in this repository.
