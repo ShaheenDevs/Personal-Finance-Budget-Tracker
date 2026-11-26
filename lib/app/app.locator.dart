@@ -1,24 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-//
-// This initial locator follows the generated locator conventions in the
-// Edge Market Flutter reference repository. Re-run build_runner after
-// changing the @StackedApp dependency declarations in app.dart.
+// dart format width=80
 
+// **************************************************************************
+// StackedLocatorGenerator
+// **************************************************************************
+
+// ignore_for_file: public_member_api_docs, implementation_imports, depend_on_referenced_packages
+
+import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_shared/stacked_shared.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 final locator = StackedLocator.instance;
 
-Future<void> setupLocator({
-  String? environment,
-  EnvironmentFilter? environmentFilter,
-}) async {
+Future<void> setupLocator(
+    {String? environment, EnvironmentFilter? environmentFilter}) async {
+// Register environments
   locator.registerEnvironment(
-    environment: environment,
-    environmentFilter: environmentFilter,
-  );
+      environment: environment, environmentFilter: environmentFilter);
 
-  locator.registerLazySingleton<NavigationService>(
-    () => NavigationService(),
-  );
+// Register dependencies
+  locator.registerLazySingleton(() => NavigationService());
 }
