@@ -285,6 +285,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Added the application entry point, Stacked locator configuration, route configuration, and `@StackedApp` configuration source.
 - Added a shared Material 3 theme and the initial Dashboard View/ViewModel using `StackedView` and `BaseViewModel`.
 - Added an initial widget test for the dashboard.
+- Kept dashboard color opacity compatible with older supported Flutter APIs.
 - Native Android/iOS platform folders and generated build artifacts have not been created in this environment.
 
 **Tests:** Not run. Flutter and Dart SDK executables are not installed in the available execution environment; dependency resolution, code generation, analyzer, widget tests, and Android build remain unverified.
@@ -333,4 +334,4 @@ The logical entities and relationships are documented in Local Data Model above.
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
 | 2026-11-26 | M1 — Planning | Initial README, architecture plan, feature checklist, logical data model | Not applicable; no app code | `826ab3e01eadb647bbe1313093edd9527b40e913` |
-| 2026-11-26 | M2 — Initial Flutter source foundation | Flutter manifest, lint config, app bootstrap, Stacked locator/router config, theme, dashboard, widget test, ignore rules | Not run: Flutter/Dart SDK unavailable | `9dfa071a7f662cb20c896cc6db0ab9b0e20e8bf0` (latest file commit)
+| 2026-11-26 | M2 — Initial Flutter source foundation | Flutter manifest, lint config, app bootstrap, Stacked locator/router config, theme, dashboard, widget test, ignore rules | Not run: Flutter/Dart SDK unavailable | `4dcc485834a091ccd960cdc308a19146cabe2d03` (latest source fix)
