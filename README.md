@@ -42,7 +42,7 @@ Status definitions:
 - ☐ Pending
 - [!] Blocked or requires a decision
 
-The initial Flutter application foundation is now committed. Product features and data workflows remain pending implementation and testing.
+The Flutter source foundation, native Android scaffold, and initial Drift database foundation are committed. Product features and data workflows remain pending implementation.
 
 ### Core Features
 - ☐ Income transaction creation, editing, deletion, and listing
@@ -86,7 +86,7 @@ The initial Flutter application foundation is now committed. Product features an
 - ☐ Premium feature presentation and entitlement checks
 
 ### Local Database
-- [~] Drift database setup and schema version 1 added; code generation and runtime verification pending
+- [~] Drift schema v1, code generation, and initial database tests pass in CI; migration coverage remains pending
 - [~] Accounts table
 - [~] Categories table
 - [~] Tags table and transaction-tag join table
@@ -95,7 +95,7 @@ The initial Flutter application foundation is now committed. Product features an
 - [~] Recurring transaction definitions
 - [~] Transaction query indexes and foreign-key constraints defined
 - ☐ Atomic transaction workflows for financial mutations
-- [~] Initial database widget/unit test file added; not executed
+- [~] Initial database tests executed successfully in CI
 - [~] Stable UUID identifiers and created/updated/deleted metadata included in schema
 
 ### Backend APIs
@@ -135,7 +135,7 @@ The initial Flutter application foundation is now committed. Product features an
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
 - ☐ Android release build verification
-- [~] GitHub Actions workflow added for dependency resolution, Drift/Stacked code generation, analysis, and tests; latest validation pending after analyzer configuration fixes
+- [~] GitHub Actions passes dependency resolution, Drift/Stacked code generation, analysis, and all 4 tests; Android debug build verification being added
 
 ### Deployment and Release
 - ☐ App identity, icon, and version configuration
@@ -280,8 +280,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 ## Milestones
 
 1. **M1 — Repository analysis and project planning:** inspect references and target repository; document architecture, scope, data model, and roadmap.
-2. **M2 — Flutter project foundation:** [~] add project manifest, analyzer rules, Stacked app setup, routing, locator, theme, and initial dashboard. Flutter SDK validation and native Android platform generation remain pending.
-3. **M3 — Local database foundation:** [~] configure Drift dependencies, schema v1, eight table definitions, foreign keys, transaction indexes, repository starter methods, and in-memory tests. Code generation, runtime tests, and migration verification remain pending.
+2. **M2 — Flutter project foundation:** [~] project manifest, analyzer rules, Stacked app setup, routing, locator, theme, dashboard, and Android scaffold are committed. CI analysis/tests pass; Android debug build verification is being added.
+3. **M3 — Local database foundation:** [~] Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests are implemented. Code generation and 3 initial database tests pass in CI; migration/upgrade coverage remains pending.
 4. **M4 — Accounts and transaction management:** implement account, income, expense, category, tag, and transaction flows.
 5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
 6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
@@ -290,6 +290,15 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-27 — CI verification and Android project identity
+- Latest GitHub Actions run `45880105913` on commit `975b7715ec29533a2b512f7fe038ea377f780596` completed successfully.
+- Dependency resolution and Drift/Stacked code generation completed successfully.
+- `flutter analyze` reported `No issues found!`.
+- All 4 tests passed: 3 Drift database tests and the dashboard widget test.
+- Confirmed the Android platform scaffold already exists under `android/`; README had incorrectly described it as missing.
+- Updated the Android application ID to `com.shaheendevs.personalfinancebudgettracker` and launcher label to `Personal Finance & Budget Tracker`.
+- Added a CI debug APK build so Android Gradle configuration is validated on every push.
 
 ### 2026-11-26 — Flutter CI validation and analysis fixes
 - Added `.github/workflows/flutter-validation.yml` to run on pushes to `main` and pull requests targeting `main`.
@@ -339,11 +348,9 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 **Git:** Initial README commit: afac94f5d0a3a386d5f0f4dfc834a25c955b0c8d.
 
 ## Pending Work
-- Review the latest GitHub Actions run and fix any remaining analyzer or test failures.
-- Generate the native Android project scaffold using Flutter tooling and verify Android application identifiers/build configuration.
-- Run Drift/Stacked code generation and resolve any generated-code or dependency compatibility errors.
-- Execute database tests, verify foreign-key behavior, and add tested migration coverage.
-- Run `flutter pub get`, Stacked code generation, `flutter analyze`, and widget tests in a Flutter-enabled environment; fix any compatibility issues found.
+- Verify the Android debug APK build in CI and resolve any Gradle/toolchain issues.
+- Verify foreign-key rejection behavior and add tested migration/upgrade coverage.
+- Add repository/service/ViewModel tests as account and transaction workflows are implemented.
 - Add Drift database and migration tests.
 - Implement all planned local-first features.
 - Confirm free-tier account allowance before enforcing an account cap.
@@ -382,6 +389,6 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
-| 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed repository construction, analyzer issues, MaterialApp route handler, and widget-test locator setup | `flutter analyze` passed; 3 database tests passed; dashboard widget test failed before route fix; rerun pending | `e344c7e412220cd759b259a8e63b53c90a8ae99a` |
+| 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed repository construction, analyzer issues, MaterialApp route handler, and widget-test locator setup | `flutter analyze` passed; all 4 tests passed on corrected run `45880105913` | `975b7715ec29533a2b512f7fe038ea377f780596` |
 | 2026-11-26 | M1 — Planning | Initial README, architecture plan, feature checklist, logical data model | Not applicable; no app code | `826ab3e01eadb647bbe1313093edd9527b40e913` |
 | 2026-11-26 | M2 — Initial Flutter source foundation | Flutter manifest, lint config, app bootstrap, Stacked locator/router config, theme, dashboard, widget test, ignore rules | Not run: Flutter/Dart SDK unavailable | `4dcc485834a091ccd960cdc308a19146cabe2d03` (latest source fix)
