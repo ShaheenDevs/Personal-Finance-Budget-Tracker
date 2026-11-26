@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance_budget_tracker/app/app_theme.dart';
-import 'package:personal_finance_budget_tracker/database/app_database.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
 import 'package:personal_finance_budget_tracker/ui/views/transactions/transactions_viewmodel.dart';
 import 'package:stacked/stacked.dart';
