@@ -365,9 +365,7 @@ class _TransactionFormDialogState extends State<_TransactionFormDialog> {
                           if (value == null) return;
                           setState(() {
                             _transactionType = value;
-                            if (!categories.any((category) => category.id == _categoryId)) {
-                              _categoryId = null;
-                            }
+                            _categoryId = null;
                           });
                         },
                 ),
