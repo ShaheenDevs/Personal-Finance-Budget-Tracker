@@ -298,7 +298,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Fixed the Stacked repository registration by making the repository constructor accept an optional database and using the standard `LazySingleton(classType: LocalFinanceRepository)` declaration.
 - The next analyzer run reported only lint/deprecation infos: generated locator/router formatting, Flutter Material API deprecation notices, and `withOpacity`.
 - Excluded generated locator/router files from analysis, configured the SDK deprecation notice as ignored for compatibility, and replaced `withOpacity` with `withValues(alpha: 0.08)`.
-- Latest CI run for commit `8ace7c4b2fce6fab024facfc45181a1a98e57592` is still running through code generation; analyzer and tests have not yet passed. No successful validation is claimed.
+- CI for commit `8ace7c4b2fce6fab024facfc45181a1a98e57592` passed dependency resolution, code generation, and `flutter analyze` (no issues found). Three database tests passed; the existing dashboard widget test failed because the app did not provide the generated Stacked route handler and the test did not initialize the locator.
+- Connected `StackedRouter().onGenerateRoute` to `MaterialApp` and initialized the locator in the widget test. The new validation run is pending; the full suite is not yet confirmed passing.
 
 ### 2026-11-26 — M3 initial local database implementation
 - Added Drift and drift_flutter runtime dependencies, drift_dev code-generation dependency, and UUID generation.
@@ -381,6 +382,6 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
-| 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed Stacked repository construction and configured analyzer for generated files/SDK deprecations | Latest run for `8ace7c4b2fce6fab024facfc45181a1a98e57592` in progress; tests not yet reached | `8ace7c4b2fce6fab024facfc45181a1a98e57592` |
+| 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed repository construction, analyzer issues, MaterialApp route handler, and widget-test locator setup | `flutter analyze` passed; 3 database tests passed; dashboard widget test failed before route fix; rerun pending | `e344c7e412220cd759b259a8e63b53c90a8ae99a` |
 | 2026-11-26 | M1 — Planning | Initial README, architecture plan, feature checklist, logical data model | Not applicable; no app code | `826ab3e01eadb647bbe1313093edd9527b40e913` |
 | 2026-11-26 | M2 — Initial Flutter source foundation | Flutter manifest, lint config, app bootstrap, Stacked locator/router config, theme, dashboard, widget test, ignore rules | Not run: Flutter/Dart SDK unavailable | `4dcc485834a091ccd960cdc308a19146cabe2d03` (latest source fix)
