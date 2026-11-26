@@ -295,7 +295,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Latest GitHub Actions run `45880105913` on commit `975b7715ec29533a2b512f7fe038ea377f780596` completed successfully.
 - Dependency resolution and Drift/Stacked code generation completed successfully.
 - `flutter analyze` reported `No issues found!`.
-- All 4 tests passed: 3 Drift database tests and the dashboard widget test.
+- All 4 original tests passed: 3 Drift database tests and the dashboard widget test.
+- Added explicit tests for foreign-key rejection, cascading account deletion, and schema version 1; validation is running for the expanded suite.
 - Confirmed the Android platform scaffold already exists under `android/`; README had incorrectly described it as missing.
 - Updated the Android application ID to `com.shaheendevs.personalfinancebudgettracker` and launcher label to `Personal Finance & Budget Tracker`.
 - Added a CI debug APK build. The first Android build exposed an outdated Android Gradle Plugin (9.1.0; Flutter requires at least 9.1.1) and Gradle wrapper (9.3.1; Flutter warned support will soon require 9.5.0); both versions have now been upgraded. The next run then exposed an unescaped ampersand in the Android manifest label; the XML attribute is now escaped as `&amp;`, and another CI run is pending.
