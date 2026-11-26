@@ -3,6 +3,7 @@ import 'package:personal_finance_budget_tracker/repositories/local_finance_repos
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:stacked_shared/stacked_shared.dart';
 
 // Stacked configuration source. Regenerate locator/router with build_runner
 // when routes or registered dependencies change.
@@ -13,7 +14,15 @@ import 'package:stacked_services/stacked_services.dart';
   dependencies: [
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: AppDatabase),
-    LazySingleton(classType: LocalFinanceRepository),
+    LazySingleton(
+      classType: LocalFinanceRepository,
+      resolveUsing: resolveLocalFinanceRepository,
+    ),
   ],
 )
 class App {}
+
+LocalFinanceRepository resolveLocalFinanceRepository() {
+  final locator = StackedLocator.instance;
+  return LocalFinanceRepository(locator<AppDatabase>());
+}
