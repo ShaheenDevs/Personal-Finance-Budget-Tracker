@@ -42,7 +42,7 @@ Status definitions:
 - ☐ Pending
 - [!] Blocked or requires a decision
 
-The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account and transaction repository workflows are now implemented; their UI/ViewModel flows remain in progress.
+The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account repository workflows, a Stacked account screen, and account ViewModel are implemented. Transaction, category, and tag screens/ViewModels remain pending.
 
 ### Core Features
 - [~] Income transaction creation, editing, deletion, and listing (repository operations implemented; UI pending)
@@ -70,12 +70,12 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☐ Advanced reports and insights
 
 ### Screens and UI
-- ☐ Dashboard / overview
+- [~] Dashboard / overview (initial offline-first landing screen; financial summaries pending)
 - ☐ Transactions list and details
 - ☐ Add/edit income and expense
 - ☐ Category management
 - ☐ Tag management
-- ☐ Accounts list and details
+- [~] Accounts list and details (list, balances, create/edit, and archive UI implemented; full list-state widget coverage pending)
 - ☐ Budget list, creation, and details
 - ☐ Recurring bills list and editor
 - ☐ Reports and charts
@@ -95,7 +95,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - [~] Recurring transaction definitions
 - [~] Transaction query indexes and foreign-key constraints defined
 - ☐ Atomic transaction workflows for financial mutations
-- [~] Initial database tests executed successfully in CI
+- ☒ 10 database/repository tests passed in CI
 - [~] Stable UUID identifiers and created/updated/deleted metadata included in schema
 
 ### Backend APIs
@@ -127,15 +127,15 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☐ Backup/sync settings only when those features exist
 
 ### Testing
-- ☐ Unit tests for calculations and domain rules
-- ☐ Repository/database tests
-- ☐ ViewModel tests
-- ☐ Widget and navigation tests
+- [~] Unit tests for account balances and repository/domain rules (covered in current suites)
+- ☒ 10 repository/database tests passed in CI
+- ☒ 4 account ViewModel tests passed in CI
+- [~] Account route/form widget test passed; broader screen-state and navigation coverage remains
 - ☐ CSV/PDF export tests
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
 - ☐ Android release build verification
-- [~] GitHub Actions passes dependency resolution, Drift/Stacked code generation, analysis, and all 4 tests; Android debug build verification being added
+- ☒ GitHub Actions passes dependency resolution, Drift/Stacked code generation, analysis, all 15 tests, and Android debug APK build
 
 ### Deployment and Release
 - ☐ App identity, icon, and version configuration
@@ -224,9 +224,12 @@ The initial Drift schema is now defined in `lib/database/tables/`. Schema versio
 
 - `lib/database/app_database.dart` — Drift database, schema version 1, database opening, and foreign-key activation.
 - `lib/database/tables/` — eight table definitions: accounts, categories, transactions, tags, transaction_tags, budgets, recurring_transactions, and app_preferences.
-- `lib/repositories/local_finance_repository.dart` — initial local account/category/transaction create and account read/watch operations; its optional database constructor supports standard Stacked lazy-singleton construction.
-- `lib/app/app.locator.dart` and `lib/app/app.dart` — NavigationService and LocalFinanceRepository dependency registration.
-- `test/database/app_database_test.dart` — initial in-memory database tests (added, not yet run).
+- `lib/repositories/local_finance_repository.dart` — account/category/tag CRUD starter operations, transaction create/update/soft-delete, transaction-tag links, and balance calculations.
+- `lib/ui/views/accounts/accounts_view.dart` and `accounts_viewmodel.dart` — account list, balances, create/edit/archive flows, loading/empty/error states, and retry action.
+- `lib/app/app.locator.dart`, `app.dart`, and `app.router.dart` — repository registration and dashboard/accounts routes.
+- `test/database/app_database_test.dart` — 10 in-memory database/repository tests.
+- `test/viewmodels/accounts_viewmodel_test.dart` — 4 account ViewModel tests.
+- `test/widget_test.dart` — dashboard-to-accounts navigation and account form widget test.
 - `build.yaml` — stores Drift date/time values as ISO-8601 text.
 
 Transaction indexes cover account/date and category/date query patterns. Foreign-key enforcement is enabled when the database opens. Financial amounts use integer minor units; no floating-point money fields are used.
@@ -266,10 +269,10 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 |---|---|---|---|
 | Repository setup | ☒ Flutter source foundation and Android scaffold committed | N/A | ☒ CI analysis and Android debug APK build passed |
 | Architecture and planning | [~] Documented; initial Stacked app structure committed | N/A | N/A |
-| Local database | ☒ Drift schema v1, eight tables, repository starter, foreign-key rules, and indexes committed | N/A | ☒ Code generation and 6 database tests passed in CI |
+| Local database | ☒ Drift schema v1, eight tables, repository workflows, foreign-key rules, and indexes committed | N/A | ☒ Code generation and 10 database/repository tests passed in CI |
 | Transactions | [~] Repository create/update/soft-delete and query operations implemented; UI pending | N/A | [~] Lifecycle and validation tests pass |
 | Categories and tags | [~] Repository creation and tag association implemented; UI pending | N/A | [~] Type and relationship tests pass |
-| Accounts and balances | [~] Create/update/archive, currency protection, and balance calculation implemented; UI pending | N/A | [~] Balance and archive rules tested |
+| Accounts and balances | [~] Create/update/archive, currency protection, balance calculation, Stacked list/form UI, and retry state implemented | N/A | ☒ Repository/ViewModel tests; route/form widget test passed |
 | Budgets | ☐ Pending | N/A | ☐ Pending |
 | Recurring bills | ☐ Pending | N/A | ☐ Pending |
 | Reports and exports | ☐ Pending | N/A | ☐ Pending |
@@ -282,7 +285,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 1. **M1 — Repository analysis and project planning:** inspect references and target repository; document architecture, scope, data model, and roadmap.
 2. **M2 — Flutter project foundation:** ☒ project manifest, analyzer rules, Stacked app setup, routing, locator, theme, dashboard, and Android scaffold committed; analyzer, widget test, and Android debug APK build passed in CI.
 3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
-4. **M4 — Accounts and transaction management:** [~] repository workflows implemented for accounts, income/expense transactions, categories, tags, balances, validation, atomic tag links, and soft deletion. Stacked ViewModels and account/transaction UI flows remain pending.
+4. **M4 — Accounts and transaction management:** [~] account repository, balances, account Stacked screen/ViewModel, create/edit/archive UI, and account tests implemented. Transaction repository operations are implemented; transaction ViewModels/screens and category/tag management UI remain pending.
 5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
 6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
 7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
@@ -290,6 +293,15 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-27 — M4 account management UI
+- Added `AccountsView` and `AccountsViewModel` using the existing Stacked architecture and the local finance repository.
+- Added account listing with calculated balances, cash/bank/wallet icons, and archived-state display.
+- Added create-account form with name, account type, three-letter currency code, and opening balance.
+- Added account editing and archive confirmation; archived accounts and their historical balances remain visible, while archived accounts cannot accept new transactions.
+- Added loading, empty, error, and retry states. Added the Accounts route to Stacked configuration/router and a dashboard entry point.
+- Added four ViewModel tests for loading balances, create/update, archive/history preservation, and validation errors; expanded widget test to verify navigation and account form fields.
+- CI run `45888645681` on source commit `0d5a4f9e1f79a5c5383e1c2aaaf7562743cbc96a` passed code generation, `flutter analyze`, all 15 tests, and Android debug APK build. Full account list-state behavior still needs broader widget coverage.
 
 ### 2026-11-27 — M4 repository foundation
 - Expanded `LocalFinanceRepository` with account create/update/archive operations, sorted account queries, and account balance calculation from opening balance plus income/expense transactions.
@@ -358,10 +370,10 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 **Git:** Initial README commit: afac94f5d0a3a386d5f0f4dfc834a25c955b0c8d.
 
 ## Pending Work
-- Re-run the Android debug APK build in CI after upgrading Android Gradle Plugin to 9.1.1 and Gradle wrapper to 9.5.0; resolve any remaining Gradle/toolchain issues.
-- Verify foreign-key rejection behavior and add tested migration/upgrade coverage.
-- Add repository/service/ViewModel tests as account and transaction workflows are implemented.
-- Add Drift database and migration tests.
+- Expand account screen widget coverage for populated, archived, and database-error states.
+- Add transaction ViewModels/screens and their widget/navigation tests.
+- Add category and tag management UI.
+- Add schema-upgrade migration tests when a future schema version introduces an actual migration path.
 - Implement all planned local-first features.
 - Confirm free-tier account allowance before enforcing an account cap.
 - Design and execute QA on an Android device/emulator.
@@ -399,6 +411,7 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
+| 2026-11-27 | M4 — Account UI and ViewModel | Added Stacked accounts screen, create/edit/archive form, dashboard route, loading/error/empty/retry states, and four ViewModel tests | `flutter analyze` passed; 15 tests passed; Android debug APK built | `0d5a4f9e1f79a5c5383e1c2aaaf7562743cbc96a` (validated run `45888645681`) |
 | 2026-11-27 | M4 — Account and transaction repository | Added account/category/tag/transaction operations, balance calculations, validation, tag links, and soft deletion | `flutter analyze` passed; 11 tests passed; Android debug APK built | `d0c057df038d56b482759052d5a2e7c8b0d45603` (validated run `45884874572`) |
 | 2026-11-27 | M2/M3 — Android and database validation | Set application ID/display name; upgraded Android Gradle Plugin and Gradle wrapper; fixed manifest XML; added foreign-key and cascade tests; CI debug APK build | `flutter analyze` passed; 7 tests passed; `flutter build apk --debug` passed | `73175434a04e7b7483af8938c3f7864bc2e19859` (validated run `45882661936`) |
 | 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed repository construction, analyzer issues, MaterialApp route handler, and widget-test locator setup | `flutter analyze` passed; all 4 tests passed on corrected run `45880105913` | `975b7715ec29533a2b512f7fe038ea377f780596` |
