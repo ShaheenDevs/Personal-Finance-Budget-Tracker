@@ -6,6 +6,9 @@ import '../database/app_database.dart';
 class LocalFinanceRepository {
   LocalFinanceRepository(this._database);
 
+  factory LocalFinanceRepository.create() =>
+      LocalFinanceRepository(AppDatabase());
+
   final AppDatabase _database;
   static const Uuid _uuid = Uuid();
 
