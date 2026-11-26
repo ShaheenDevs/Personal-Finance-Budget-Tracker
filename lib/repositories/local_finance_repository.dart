@@ -189,6 +189,13 @@ class LocalFinanceRepository {
         .get();
   }
 
+  Future<List<String>> getTagIdsForTransaction(String transactionId) async {
+    final links = await (_database.select(_database.transactionTags)
+          ..where((row) => row.transactionId.equals(transactionId)))
+        .get();
+    return links.map((link) => link.tagId).toList();
+  }
+
   Future<int> createTag({required String name}) {
     final normalizedName = name.trim();
     if (normalizedName.isEmpty) {
