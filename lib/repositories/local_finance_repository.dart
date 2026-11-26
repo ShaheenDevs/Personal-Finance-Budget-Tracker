@@ -761,8 +761,8 @@ class LocalFinanceRepository {
     if (existing.currencyCode != normalizedCurrency) {
       final hasTransactions = await (_database.select(_database.transactions)
             ..where((row) => row.accountId.equals(id)))
-          .getSingleOrNull();
-      if (hasTransactions != null) {
+          .get();
+      if (hasTransactions.isNotEmpty) {
         throw StateError(
           'Account currency cannot change after transactions are recorded.',
         );
