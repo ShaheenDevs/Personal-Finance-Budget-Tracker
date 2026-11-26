@@ -4,6 +4,7 @@ import 'categories.dart';
 
 @TableIndex(name: 'transactions_account_date', columns: {#accountId, #transactionDate})
 @TableIndex(name: 'transactions_category_date', columns: {#categoryId, #transactionDate})
+@DataClassName('FinanceTransaction')
 class Transactions extends Table {
   TextColumn get id => text()();
   TextColumn get accountId => text().references(
