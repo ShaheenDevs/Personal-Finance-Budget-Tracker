@@ -67,4 +67,44 @@ void main() {
       throwsArgumentError,
     );
   });
+  test('enforces account foreign keys for transactions', () async {
+    expect(
+      repository.createTransaction(
+        accountId: 'missing-account',
+        transactionType: 'expense',
+        amountMinorUnits: 100,
+        currencyCode: 'PKR',
+        transactionDate: DateTime(2026, 1, 10),
+      ),
+      throwsA(anything),
+    );
+  });
+
+  test('cascades account deletion to its transactions', () async {
+    await repository.createAccount(
+      name: 'Temporary account',
+      accountType: 'cash',
+      currencyCode: 'PKR',
+    );
+    final account = (await repository.getAccounts()).single;
+
+    await repository.createTransaction(
+      accountId: account.id,
+      transactionType: 'expense',
+      amountMinorUnits: 500,
+      currencyCode: 'PKR',
+      transactionDate: DateTime(2026, 1, 10),
+    );
+
+    await (database.delete(database.accounts)
+          ..where((row) => row.id.equals(account.id)))
+        .go();
+
+    expect(await database.select(database.transactions).get(), isEmpty);
+  });
+
+  test('uses the initial database schema version', () {
+    expect(database.schemaVersion, 1);
+  });
+
 }
