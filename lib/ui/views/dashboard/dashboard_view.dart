@@ -83,6 +83,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
               icon: const Icon(Icons.account_balance_wallet_outlined),
               label: const Text('Manage accounts'),
             ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => locator<NavigationService>().navigateTo(
+                Routes.transactionsView,
+              ),
+              icon: const Icon(Icons.receipt_long_outlined),
+              label: const Text('Manage transactions'),
+            ),
             const SizedBox(height: 16),
             const _FoundationNote(),
           ],
