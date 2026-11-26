@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'accounts.dart';
 import 'categories.dart';
 
+@TableIndex(name: 'transactions_account_date', columns: {#accountId, #transactionDate})
+@TableIndex(name: 'transactions_category_date', columns: {#categoryId, #transactionDate})
 class Transactions extends Table {
   TextColumn get id => text()();
   TextColumn get accountId => text().references(
@@ -25,10 +27,4 @@ class Transactions extends Table {
 
   @override
   Set<Column<Object>> get primaryKey => {id};
-
-  @override
-  List<Set<Column<Object>>> get indexes => [
-        {accountId, transactionDate},
-        {categoryId, transactionDate},
-      ];
 }
