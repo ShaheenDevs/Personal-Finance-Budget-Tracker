@@ -302,7 +302,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 **Tests:** Not run. Flutter and Dart SDK executables are unavailable in the execution environment. Drift/Stacked code generation, dependency resolution, analyzer, database tests, and migration behavior remain unverified.
 
-**Git:** Initial M3 implementation committed file-by-file; latest M3 source/config commit: `0224ea8ba36f66e69f3caa6574345ebd1e7d1d15`.
+**Git:** Initial M3 implementation committed file-by-file; latest M3 source/test commit: `48735836df77be5ac70caf814e5887d4da5f8f44`.
 
 ### 2026-11-26 — M2 initial Flutter source foundation
 - Added `pubspec.yaml` with Flutter, Stacked, Stacked Services, build_runner, and Stacked generator dependencies, following the reference repository's package conventions.
