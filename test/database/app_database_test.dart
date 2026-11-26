@@ -69,17 +69,19 @@ void main() {
   });
   test('enforces account foreign keys for transactions', () async {
     expect(
-      repository.createTransaction(
-        accountId: 'missing-account',
-        transactionType: 'expense',
-        amountMinorUnits: 100,
-        currencyCode: 'PKR',
-        transactionDate: DateTime(2026, 1, 10),
-      ),
+      database.into(database.transactions).insert(
+            TransactionsCompanion.insert(
+              id: 'orphan-transaction',
+              accountId: 'missing-account',
+              transactionType: 'expense',
+              amountMinorUnits: 100,
+              currencyCode: 'PKR',
+              transactionDate: DateTime(2026, 1, 10),
+            ),
+          ),
       throwsA(anything),
     );
   });
-
   test('cascades account deletion to its transactions', () async {
     await repository.createAccount(
       name: 'Temporary account',
