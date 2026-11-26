@@ -11,6 +11,8 @@ import 'package:flutter/material.dart' as _i3;
 import 'package:flutter/material.dart';
 import 'package:personal_finance_budget_tracker/ui/views/accounts/accounts_view.dart'
     as _i5;
+import 'package:personal_finance_budget_tracker/ui/views/transactions/transactions_view.dart'
+    as _i6;
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_view.dart'
     as _i2;
 import 'package:stacked/stacked.dart' as _i1;
@@ -19,8 +21,9 @@ import 'package:stacked_services/stacked_services.dart' as _i4;
 class Routes {
   static const dashboardView = '/';
   static const accountsView = '/accounts-view';
+  static const transactionsView = '/transactions-view';
 
-  static const all = <String>{dashboardView, accountsView};
+  static const all = <String>{dashboardView, accountsView, transactionsView};
 }
 
 class StackedRouter extends _i1.RouterBase {
@@ -32,12 +35,20 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.accountsView,
       page: _i5.AccountsView,
+    ),
+    _i1.RouteDef(
+      Routes.transactionsView,
+      page: _i6.TransactionsView,
     )
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i5.AccountsView: (data) => _i3.MaterialPageRoute<dynamic>(
           builder: (context) => const _i5.AccountsView(),
+          settings: data,
+        ),
+    _i6.TransactionsView: (data) => _i3.MaterialPageRoute<dynamic>(
+          builder: (context) => const _i6.TransactionsView(),
           settings: data,
         ),
     _i2.DashboardView: (data) {
@@ -140,6 +151,40 @@ extension AccountsNavigatorStateExtension on _i4.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.accountsView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+}
+
+extension TransactionsNavigatorStateExtension on _i4.NavigationService {
+  Future<dynamic> navigateToTransactionsView({
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.transactionsView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
+  Future<dynamic> replaceWithTransactionsView({
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(
+      Routes.transactionsView,
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
