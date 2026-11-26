@@ -264,9 +264,9 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 | Workstream | Flutter | Backend | Testing |
 |---|---|---|---|
-| Repository setup | [~] Flutter source foundation committed; Android platform shell pending | N/A | ☐ Pending |
+| Repository setup | ☒ Flutter source foundation and Android scaffold committed | N/A | ☒ CI analysis and Android debug APK build passed |
 | Architecture and planning | [~] Documented; initial Stacked app structure committed | N/A | N/A |
-| Local database | [~] Schema v1 and repository starter implemented; code generation succeeds in CI | N/A | [~] Tests added; latest CI validation pending |
+| Local database | ☒ Drift schema v1, eight tables, repository starter, foreign-key rules, and indexes committed | N/A | ☒ Code generation and 6 database tests passed in CI |
 | Transactions | ☐ Pending | N/A | ☐ Pending |
 | Categories and tags | ☐ Pending | N/A | ☐ Pending |
 | Accounts and balances | ☐ Pending | N/A | ☐ Pending |
@@ -280,8 +280,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 ## Milestones
 
 1. **M1 — Repository analysis and project planning:** inspect references and target repository; document architecture, scope, data model, and roadmap.
-2. **M2 — Flutter project foundation:** [~] project manifest, analyzer rules, Stacked app setup, routing, locator, theme, dashboard, and Android scaffold are committed. CI analysis/tests pass; Android debug build verification is being added.
-3. **M3 — Local database foundation:** [~] Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests are implemented. Code generation and 3 initial database tests pass in CI; migration/upgrade coverage remains pending.
+2. **M2 — Flutter project foundation:** ☒ project manifest, analyzer rules, Stacked app setup, routing, locator, theme, dashboard, and Android scaffold committed; analyzer, widget test, and Android debug APK build passed in CI.
+3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
 4. **M4 — Accounts and transaction management:** implement account, income, expense, category, tag, and transaction flows.
 5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
 6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
@@ -295,11 +295,12 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Latest GitHub Actions run `45880105913` on commit `975b7715ec29533a2b512f7fe038ea377f780596` completed successfully.
 - Dependency resolution and Drift/Stacked code generation completed successfully.
 - `flutter analyze` reported `No issues found!`.
-- All 4 original tests passed: 3 Drift database tests and the dashboard widget test.
-- Added explicit tests for foreign-key rejection, cascading account deletion, and schema version 1; validation is running for the expanded suite.
+- The expanded suite passed all 7 tests: 6 Drift database tests and 1 dashboard widget test.
+- Database tests cover account persistence, transaction/account relationships, positive transaction amounts, foreign-key rejection, cascading account deletion, and schema version 1.
 - Confirmed the Android platform scaffold already exists under `android/`; README had incorrectly described it as missing.
 - Updated the Android application ID to `com.shaheendevs.personalfinancebudgettracker` and launcher label to `Personal Finance & Budget Tracker`.
-- Added a CI debug APK build. The first Android build exposed an outdated Android Gradle Plugin (9.1.0; Flutter requires at least 9.1.1) and Gradle wrapper (9.3.1; Flutter warned support will soon require 9.5.0); both versions have now been upgraded. The next run then exposed an unescaped ampersand in the Android manifest label; the XML attribute is now escaped as `&amp;`, and another CI run is pending.
+- Added a CI debug APK build. Fixed the Android Gradle Plugin (9.1.0 to 9.1.1), Gradle wrapper (9.3.1 to 9.5.0), and escaped the ampersand in the manifest label as `&amp;`.
+- Latest CI run `45882661936` on commit `73175434a04e7b7483af8938c3f7864bc2e19859` passed dependency resolution, code generation, `flutter analyze`, all 7 tests, and `flutter build apk --debug`.
 
 ### 2026-11-26 — Flutter CI validation and analysis fixes
 - Added `.github/workflows/flutter-validation.yml` to run on pushes to `main` and pull requests targeting `main`.
@@ -390,6 +391,7 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
+| 2026-11-27 | M2/M3 — Android and database validation | Set application ID/display name; upgraded Android Gradle Plugin and Gradle wrapper; fixed manifest XML; added foreign-key and cascade tests; CI debug APK build | `flutter analyze` passed; 7 tests passed; `flutter build apk --debug` passed | `73175434a04e7b7483af8938c3f7864bc2e19859` (validated run `45882661936`) |
 | 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed repository construction, analyzer issues, MaterialApp route handler, and widget-test locator setup | `flutter analyze` passed; all 4 tests passed on corrected run `45880105913` | `975b7715ec29533a2b512f7fe038ea377f780596` |
 | 2026-11-26 | M1 — Planning | Initial README, architecture plan, feature checklist, logical data model | Not applicable; no app code | `826ab3e01eadb647bbe1313093edd9527b40e913` |
 | 2026-11-26 | M2 — Initial Flutter source foundation | Flutter manifest, lint config, app bootstrap, Stacked locator/router config, theme, dashboard, widget test, ignore rules | Not run: Flutter/Dart SDK unavailable | `4dcc485834a091ccd960cdc308a19146cabe2d03` (latest source fix)
