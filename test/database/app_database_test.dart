@@ -221,4 +221,42 @@ void main() {
     );
   });
 
+  test('protects recorded account currency and archived accounts', () async {
+    await repository.createAccount(
+      name: 'Main account',
+      accountType: 'bank',
+      currencyCode: 'PKR',
+    );
+    final account = (await repository.getAccounts()).single;
+    await repository.createTransaction(
+      accountId: account.id,
+      transactionType: 'expense',
+      amountMinorUnits: 100,
+      currencyCode: 'PKR',
+      transactionDate: DateTime(2026, 2, 1),
+    );
+
+    expect(
+      repository.updateAccount(
+        id: account.id,
+        name: 'Main account',
+        accountType: 'bank',
+        currencyCode: 'USD',
+      ),
+      throwsStateError,
+    );
+
+    await repository.archiveAccount(account.id);
+    expect(
+      repository.createTransaction(
+        accountId: account.id,
+        transactionType: 'expense',
+        amountMinorUnits: 100,
+        currencyCode: 'PKR',
+        transactionDate: DateTime(2026, 2, 2),
+      ),
+      throwsStateError,
+    );
+  });
+
 }
