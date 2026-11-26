@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance_budget_tracker/app/app.locator.dart';
+import 'package:personal_finance_budget_tracker/app/app.router.dart';
 import 'package:personal_finance_budget_tracker/app/app_theme.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
@@ -71,6 +74,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: () => locator<NavigationService>().navigateTo(
+                Routes.accountsView,
+              ),
+              icon: const Icon(Icons.account_balance_wallet_outlined),
+              label: const Text('Manage accounts'),
             ),
             const SizedBox(height: 16),
             const _FoundationNote(),
