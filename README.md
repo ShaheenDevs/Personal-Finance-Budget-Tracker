@@ -135,7 +135,7 @@ The initial Flutter application foundation is now committed. Product features an
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
 - ☐ Android release build verification
-- [~] GitHub Actions workflow added for dependency resolution, Drift/Stacked code generation, analysis, and tests; first run pending completion
+- [~] GitHub Actions workflow added for dependency resolution, Drift/Stacked code generation, analysis, and tests; latest validation run pending
 
 ### Deployment and Release
 - ☐ App identity, icon, and version configuration
@@ -224,7 +224,7 @@ The initial Drift schema is now defined in `lib/database/tables/`. Schema versio
 
 - `lib/database/app_database.dart` — Drift database, schema version 1, database opening, and foreign-key activation.
 - `lib/database/tables/` — eight table definitions: accounts, categories, transactions, tags, transaction_tags, budgets, recurring_transactions, and app_preferences.
-- `lib/repositories/local_finance_repository.dart` — initial local account/category/transaction create and account read/watch operations.
+- `lib/repositories/local_finance_repository.dart` — initial local account/category/transaction create and account read/watch operations, with a production factory used by Stacked registration.
 - `lib/app/app.locator.dart` and `lib/app/app.dart` — database and repository dependency registration.
 - `test/database/app_database_test.dart` — initial in-memory database tests (added, not yet run).
 - `build.yaml` — stores Drift date/time values as ISO-8601 text.
@@ -266,7 +266,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 |---|---|---|---|
 | Repository setup | [~] Flutter source foundation committed; Android platform shell pending | N/A | ☐ Pending |
 | Architecture and planning | [~] Documented; initial Stacked app structure committed | N/A | N/A |
-| Local database | [~] Schema v1 and repository starter implemented; code generation pending | N/A | [~] Tests added; GitHub Actions validation workflow added, first run pending |
+| Local database | [~] Schema v1 and repository starter implemented; code generation succeeds in CI | N/A | [~] Tests added; latest CI validation pending |
 | Transactions | ☐ Pending | N/A | ☐ Pending |
 | Categories and tags | ☐ Pending | N/A | ☐ Pending |
 | Accounts and balances | ☐ Pending | N/A | ☐ Pending |
@@ -291,10 +291,12 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 ## Completed Work
 
-### 2026-11-26 — Flutter CI validation workflow
+### 2026-11-26 — Flutter CI validation and dependency-registration correction
 - Added `.github/workflows/flutter-validation.yml` to run on pushes to `main` and pull requests targeting `main`.
 - The workflow sets up the stable Flutter toolchain, resolves packages, generates Drift and Stacked code, runs `flutter analyze`, and executes `flutter test`.
-- The first GitHub Actions run was started for commit `b7e57bed38218c3a061f2cbef507d25aafcff360`; its result is pending. No passing test or analyzer result is claimed yet.
+- Initial CI confirmed dependency resolution and Drift/Stacked code generation succeed, then exposed a generated locator constructor-resolution error for `LocalFinanceRepository`.
+- Added a production repository factory and aligned the Stacked dependency registration and checked-in locator with that factory.
+- Earlier CI attempts failed at analysis before tests could run. The latest run for commit `6f2f6854f20787bb8e63ac44e55e2bddf65a1b1d` is pending; no passing analyzer or test result is claimed yet.
 
 ### 2026-11-26 — M3 initial local database implementation
 - Added Drift and drift_flutter runtime dependencies, drift_dev code-generation dependency, and UUID generation.
@@ -334,7 +336,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 **Git:** Initial README commit: afac94f5d0a3a386d5f0f4dfc834a25c955b0c8d.
 
 ## Pending Work
-- Review the first GitHub Actions run and fix any dependency, code-generation, analyzer, or test failures.
+- Review the latest GitHub Actions run and fix any remaining analyzer or test failures.
 - Generate the native Android project scaffold using Flutter tooling and verify Android application identifiers/build configuration.
 - Run Drift/Stacked code generation and resolve any generated-code or dependency compatibility errors.
 - Execute database tests, verify foreign-key behavior, and add tested migration coverage.
@@ -377,6 +379,6 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
-| 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow for pub get, Drift/Stacked generation, analysis, and tests | First run pending | `b7e57bed38218c3a061f2cbef507d25aafcff360` |
+| 2026-11-26 | CI — Flutter validation | Added GitHub Actions workflow; fixed Stacked repository registration using a repository factory | Latest run pending; earlier analysis attempts exposed and tracked the constructor-resolution issue | `6f2f6854f20787bb8e63ac44e55e2bddf65a1b1d` |
 | 2026-11-26 | M1 — Planning | Initial README, architecture plan, feature checklist, logical data model | Not applicable; no app code | `826ab3e01eadb647bbe1313093edd9527b40e913` |
 | 2026-11-26 | M2 — Initial Flutter source foundation | Flutter manifest, lint config, app bootstrap, Stacked locator/router config, theme, dashboard, widget test, ignore rules | Not run: Flutter/Dart SDK unavailable | `4dcc485834a091ccd960cdc308a19146cabe2d03` (latest source fix)
