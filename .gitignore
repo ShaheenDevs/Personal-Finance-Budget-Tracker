@@ -1,0 +1,45 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history/
+.svn/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+coverage/
+*.freezed.dart
+*.g.dart
+
+# Android
+/android/local.properties
+/android/key.properties
+/android/**/GeneratedPluginRegistrant.java
+/android/**/captures/
+/android/**/outputs/
+/android/**/intermediates/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
