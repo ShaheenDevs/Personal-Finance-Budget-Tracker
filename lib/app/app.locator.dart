@@ -23,6 +23,6 @@ Future<void> setupLocator({
     () => NavigationService(),
   );
   locator.registerLazySingleton<LocalFinanceRepository>(
-    () => LocalFinanceRepository.create(),
+    () => LocalFinanceRepository(),
   );
 }
