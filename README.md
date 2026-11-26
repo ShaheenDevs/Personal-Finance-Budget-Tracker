@@ -298,7 +298,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Configured Drift to store date/time values as ISO-8601 text.
 - Added a local repository with account creation/list/watch, category creation, and transaction creation; transaction amounts must be positive integer minor units.
 - Registered the database and repository in the Stacked service locator.
-- Added in-memory database tests for account persistence and transaction amount validation.
+- Added in-memory database tests for account persistence, transaction persistence with its account relationship, and transaction amount validation.
 
 **Tests:** Not run. Flutter and Dart SDK executables are unavailable in the execution environment. Drift/Stacked code generation, dependency resolution, analyzer, database tests, and migration behavior remain unverified.
 
