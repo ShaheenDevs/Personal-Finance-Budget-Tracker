@@ -1,4 +1,5 @@
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
+import 'package:personal_finance_budget_tracker/ui/views/accounts/accounts_view.dart';
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -8,6 +9,7 @@ import 'package:stacked_services/stacked_services.dart';
 @StackedApp(
   routes: [
     MaterialRoute(page: DashboardView, initial: true),
+    MaterialRoute(page: AccountsView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
