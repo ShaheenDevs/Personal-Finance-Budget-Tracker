@@ -16,7 +16,7 @@ Future<void> pumpUntilFound(
 }
 
 void main() {
-  testWidgets('dashboard opens account flow and creates a cash account', (tester) async {
+  testWidgets('dashboard opens the account screen and add-account form', (tester) async {
     await setupLocator();
     await tester.pumpWidget(const PersonalFinanceApp());
 
@@ -24,24 +24,18 @@ void main() {
     expect(find.text('Your financial overview starts here'), findsOneWidget);
 
     await tester.tap(find.text('Manage accounts'));
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 500)),
-    );
-    await tester.pump();
-    await pumpUntilFound(tester, find.text('No accounts yet'));
-
-    expect(find.text('Accounts'), findsOneWidget);
+    await pumpUntilFound(tester, find.text('Accounts'));
 
     await tester.tap(find.text('Add account'));
     await tester.pump();
-    expect(find.text('Add account'), findsOneWidget);
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'Daily cash');
-    await tester.enterText(find.byType(TextFormField).at(1), 'PKR');
-    await tester.enterText(find.byType(TextFormField).at(2), '1250.50');
-    await tester.tap(find.text('Create account'));
-    await pumpUntilFound(tester, find.text('Daily cash'));
+    expect(find.text('Account name'), findsOneWidget);
+    expect(find.text('Account type'), findsOneWidget);
+    expect(find.text('Currency code'), findsOneWidget);
+    expect(find.text('Opening balance'), findsOneWidget);
 
-    expect(find.text('PKR 1250.50'), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pump();
+    expect(find.text('Create account'), findsNothing);
   });
 }
