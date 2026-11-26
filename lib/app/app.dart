@@ -11,10 +11,7 @@ import 'package:stacked_services/stacked_services.dart';
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
-    LazySingleton(
-      classType: LocalFinanceRepository,
-      resolveUsing: LocalFinanceRepository.create,
-    ),
+    LazySingleton(classType: LocalFinanceRepository),
   ],
 )
 class App {}
