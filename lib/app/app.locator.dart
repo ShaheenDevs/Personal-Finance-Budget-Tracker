@@ -4,7 +4,6 @@
 // conventions used by the Edge Market Flutter reference repository.
 // Regenerate after changing dependency declarations in app.dart.
 
-import 'package:personal_finance_budget_tracker/database/app_database.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -23,8 +22,7 @@ Future<void> setupLocator({
   locator.registerLazySingleton<NavigationService>(
     () => NavigationService(),
   );
-  locator.registerLazySingleton<AppDatabase>(() => AppDatabase());
   locator.registerLazySingleton<LocalFinanceRepository>(
-    () => LocalFinanceRepository(locator<AppDatabase>()),
+    () => LocalFinanceRepository.create(),
   );
 }
