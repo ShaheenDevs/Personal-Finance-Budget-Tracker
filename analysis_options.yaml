@@ -2,6 +2,11 @@ analyzer:
   exclude:
     - build/**
     - android/**
+    - lib/app/*.locator.dart
+    - lib/app/*.router.dart
+  errors:
+    deprecated_member_use: ignore
+
 include: package:flutter_lints/flutter.yaml
 
 linter:
