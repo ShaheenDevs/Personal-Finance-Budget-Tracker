@@ -1,5 +1,6 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:flutter/material.dart';
-import 'package:personal_finance_budget_tracker/database/app_database.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
 import 'package:personal_finance_budget_tracker/ui/views/budgets/budgets_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -176,6 +177,7 @@ class _BudgetCard extends StatelessWidget {
                     if (value == 'edit') onEdit();
                     if (value == 'delete') {
                       final confirmed = await _confirmDelete(context, 'Delete this budget?');
+                      if (!context.mounted) return;
                       if (confirmed) await viewModel.deleteBudget(budget.id);
                     }
                   },
@@ -245,6 +247,7 @@ class _RecurringCard extends StatelessWidget {
             if (value == 'toggle') await viewModel.toggleRecurring(row);
             if (value == 'delete') {
               final confirmed = await _confirmDelete(context, 'Delete this recurring schedule?');
+              if (!context.mounted) return;
               if (confirmed) await viewModel.deleteRecurring(row.id);
             }
           },
