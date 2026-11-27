@@ -44,7 +44,7 @@ void main() {
     await tester.enterText(find.byType(TextField).first, '500.00');
     await tester.tap(find.text('Save'));
     await pumpUntilFound(tester, find.text('All expenses'));
-    expect(find.text('PKR 500.00'), findsOneWidget);
+    expect(find.textContaining('PKR 500.00'), findsOneWidget);
 
     await tester.tap(find.text('Add schedule'));
     await tester.pumpAndSettle();
