@@ -77,6 +77,78 @@ class CategoriesTagsViewModel extends BaseViewModel {
     }
   }
 
+  Future<bool> renameCategory({required String id, required String name}) async {
+    errorMessage = null;
+    successMessage = null;
+    try {
+      await _repository.renameCategory(id: id, name: name);
+      await loadData();
+      successMessage = 'Category renamed.';
+      notifyListeners();
+      return true;
+    } catch (error) {
+      errorMessage = _friendlyManageError(error, item: 'category');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteCategory(String id) async {
+    errorMessage = null;
+    successMessage = null;
+    try {
+      await _repository.deleteCategory(id);
+      await loadData();
+      successMessage = 'Category deleted.';
+      notifyListeners();
+      return true;
+    } catch (error) {
+      errorMessage = _friendlyManageError(error, item: 'category');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> renameTag({required String id, required String name}) async {
+    errorMessage = null;
+    successMessage = null;
+    try {
+      await _repository.renameTag(id: id, name: name);
+      await loadData();
+      successMessage = 'Tag renamed.';
+      notifyListeners();
+      return true;
+    } catch (error) {
+      errorMessage = _friendlyManageError(error, item: 'tag');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteTag(String id) async {
+    errorMessage = null;
+    successMessage = null;
+    try {
+      await _repository.deleteTag(id);
+      await loadData();
+      successMessage = 'Tag deleted.';
+      notifyListeners();
+      return true;
+    } catch (error) {
+      errorMessage = _friendlyManageError(error, item: 'tag');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  String _friendlyManageError(Object error, {required String item}) {
+    if (error is ArgumentError) {
+      return error.toString().replaceFirst('Invalid argument(s): ', '');
+    }
+    if (error is StateError) return error.message;
+    return 'Could not update this $item. It may already exist.';
+  }
+
   String _friendlyError(Object error, {required String item}) {
     if (error is ArgumentError) {
       return error.toString().replaceFirst('Invalid argument(s): ', '');
