@@ -658,47 +658,6 @@ int? _parseMinorUnits(String input) {
       : int.parse(parts[1].padRight(2, '0'));
   return whole * 100 + fraction;
 }
-String _date(DateTime date) =>
-    '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-).hasMatch(normalized)) {
-    return null;
-  }
-  final parts = normalized.split('.');
-  final whole = int.tryParse(parts.first);
-  if (whole == null) return null;
-  final fraction = parts.length == 1
-      ? 0
-      : int.parse(parts[1].padRight(2, '0'));
-  return whole * 100 + fraction;
-}
-
-String _date(DateTime date) =>
-    '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-).hasMatch(normalized)) {
-    return null;
-  }
-  final parts = normalized.split('.');
-  final whole = int.tryParse(parts.first);
-  if (whole == null) return null;
-  final fraction = parts.length == 1
-      ? 0
-      : int.parse(parts[1].padRight(2, '0'));
-  return whole * 100 + fraction;
-}
-
-String _date(DateTime date) =>
-    '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-).hasMatch(normalized)) {
-    return null;
-  }
-  final parts = normalized.split('.');
-  final whole = int.tryParse(parts.first);
-  if (whole == null) return null;
-  final fraction = parts.length == 1
-      ? 0
-      : int.parse(parts[1].padRight(2, '0'));
-  return whole * 100 + fraction;
-}
 
 String _date(DateTime date) =>
     '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
