@@ -4,7 +4,9 @@ import 'package:personal_finance_budget_tracker/services/app_security_service.da
 import 'package:personal_finance_budget_tracker/ui/views/app_lock/app_lock_view.dart';
 
 class AppLockGate extends StatefulWidget {
-  const AppLockGate({super.key, required this.child});
+  const AppLockGate({super.key, required this.child, this.securityService});
+
+  final AppSecurityService? securityService;
 
   final Widget child;
 
@@ -13,7 +15,7 @@ class AppLockGate extends StatefulWidget {
 }
 
 class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
-  final AppSecurityService _security = locator<AppSecurityService>();
+  late final AppSecurityService _security;
   bool _loading = true;
   bool _enabled = false;
   bool _locked = false;
@@ -22,6 +24,7 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    _security = widget.securityService ?? locator<AppSecurityService>();
     WidgetsBinding.instance.addObserver(this);
     _loadLockState();
   }
