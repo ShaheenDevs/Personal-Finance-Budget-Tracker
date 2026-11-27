@@ -2,6 +2,7 @@ import 'package:personal_finance_budget_tracker/repositories/local_finance_repos
 import 'package:personal_finance_budget_tracker/ui/views/accounts/accounts_view.dart';
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_view.dart';
 import 'package:personal_finance_budget_tracker/ui/views/categories_tags/categories_tags_view.dart';
+import 'package:personal_finance_budget_tracker/ui/views/budgets/budgets_view.dart';
 import 'package:personal_finance_budget_tracker/ui/views/transactions/transactions_view.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -14,6 +15,7 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: AccountsView),
     MaterialRoute(page: TransactionsView),
     MaterialRoute(page: CategoriesTagsView),
+    MaterialRoute(page: BudgetsView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
