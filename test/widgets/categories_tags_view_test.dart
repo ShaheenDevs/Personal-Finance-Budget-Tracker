@@ -46,7 +46,7 @@ void main() {
     await tester.tap(find.byTooltip('Add Tags'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), 'Essential');
-    await tester.tap(find.text('Add tag'));
+    await tester.tap(find.text('Add tag').last);
     await pumpUntilFound(tester, find.text('Essential'));
 
     expect(find.text('Salary'), findsOneWidget);
