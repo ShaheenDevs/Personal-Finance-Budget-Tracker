@@ -26,6 +26,12 @@ class DashboardView extends StackedView<DashboardViewModel> {
             style: TextStyle(fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
+            tooltip: 'Settings',
+            onPressed: () => locator<NavigationService>()
+                .navigateTo(Routes.settingsView),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+          IconButton(
             tooltip: 'Refresh overview',
             onPressed: viewModel.loadSummary,
             icon: const Icon(Icons.refresh),
