@@ -13,6 +13,8 @@ import 'package:personal_finance_budget_tracker/repositories/local_finance_repos
     as _i6;
 import 'package:personal_finance_budget_tracker/ui/views/accounts/accounts_view.dart'
     as _i3;
+import 'package:personal_finance_budget_tracker/ui/views/categories_tags/categories_tags_view.dart'
+    as _i8;
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_view.dart'
     as _i2;
 import 'package:personal_finance_budget_tracker/ui/views/transactions/transactions_view.dart'
@@ -26,6 +28,8 @@ class Routes {
   static const accountsView = '/accounts-view';
 
   static const transactionsView = '/transactions-view';
+
+  static const categoriesTagsView = '/categories-tags-view';
 
   static const all = <String>{
     dashboardView,
@@ -47,6 +51,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.transactionsView,
       page: _i4.TransactionsView,
+    ),
+    _i1.RouteDef(
+      Routes.categoriesTagsView,
+      page: _i8.CategoriesTagsView,
     ),
   ];
 
@@ -70,6 +78,10 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
+    _i8.CategoriesTagsView: (data) => _i5.MaterialPageRoute<dynamic>(
+          builder: (context) => const _i8.CategoriesTagsView(),
+          settings: data,
+        ),
     _i4.TransactionsView: (data) {
       final args = data.getArgs<TransactionsViewArguments>(
         orElse: () => const TransactionsViewArguments(),
@@ -264,5 +276,39 @@ extension NavigatorStateExtension on _i7.NavigationService {
         preventDuplicates: preventDuplicates,
         parameters: parameters,
         transition: transition);
+  }
+}
+
+extension CategoriesTagsNavigatorStateExtension on _i7.NavigationService {
+  Future<dynamic> navigateToCategoriesTagsView({
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.categoriesTagsView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
+  Future<dynamic> replaceWithCategoriesTagsView({
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(
+      Routes.categoriesTagsView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
   }
 }
