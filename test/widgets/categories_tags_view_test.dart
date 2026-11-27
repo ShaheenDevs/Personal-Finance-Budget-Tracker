@@ -47,7 +47,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), 'Essential');
     await tester.tap(find.text('Add tag').last);
-    await pumpUntilFound(tester, find.text('Essential'));
+    await tester.pumpAndSettle();
+    expect(find.text('Essential'), findsOneWidget);
 
     expect(find.text('Salary'), findsOneWidget);
     expect(find.text('Essential'), findsOneWidget);
