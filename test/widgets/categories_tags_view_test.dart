@@ -15,26 +15,6 @@ Future<void> pumpUntilFound(
     if (finder.evaluate().isNotEmpty) return;
   }
   throw TestFailure('Widget not found after waiting: $finder');
-  testWidgets('renames and deletes an unused category', (tester) async {
-    await repository.createCategory(name: 'Temporary', transactionType: 'expense');
-    await tester.pumpWidget(MaterialApp(home: CategoriesTagsView(repository: repository)));
-    await pumpUntilFound(tester, find.text('Temporary'));
-    await tester.tap(find.byTooltip('Manage Temporary'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Rename'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextFormField), 'Groceries');
-    await tester.tap(find.text('Save'));
-    await pumpUntilFound(tester, find.text('Groceries'));
-    expect(find.text('Temporary'), findsNothing);
-    await tester.tap(find.byTooltip('Manage Groceries'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Delete'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Delete').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Groceries'), findsNothing);
-  });
 }
 
 void main() {
@@ -73,4 +53,25 @@ void main() {
     expect(find.text('Salary'), findsOneWidget);
     expect(find.text('Essential'), findsOneWidget);
   });
+  testWidgets('renames and deletes an unused category', (tester) async {
+    await repository.createCategory(name: 'Temporary', transactionType: 'expense');
+    await tester.pumpWidget(MaterialApp(home: CategoriesTagsView(repository: repository)));
+    await pumpUntilFound(tester, find.text('Temporary'));
+    await tester.tap(find.byTooltip('Manage Temporary'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Rename'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), 'Groceries');
+    await tester.tap(find.text('Save'));
+    await pumpUntilFound(tester, find.text('Groceries'));
+    expect(find.text('Temporary'), findsNothing);
+    await tester.tap(find.byTooltip('Manage Groceries'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Groceries'), findsNothing);
+  });
+
 }
