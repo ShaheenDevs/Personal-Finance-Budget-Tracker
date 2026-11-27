@@ -1,5 +1,4 @@
 import 'package:personal_finance_budget_tracker/app/app.locator.dart';
-import 'package:personal_finance_budget_tracker/database/app_database.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
 import 'package:stacked/stacked.dart';
 
@@ -69,8 +68,8 @@ class DashboardViewModel extends BaseViewModel {
           }
         }
       }
-      summaries = currencies.toList()..sort();
-      summaries = summaries.map((currency) {
+      final sortedCurrencies = currencies.toList()..sort();
+      summaries = sortedCurrencies.map((currency) {
         final values = totals[currency] ?? [0, 0, 0];
         return DashboardCurrencySummary(
           currencyCode: currency,
