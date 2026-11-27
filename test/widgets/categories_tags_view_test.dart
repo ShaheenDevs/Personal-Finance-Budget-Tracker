@@ -41,6 +41,7 @@ void main() {
     await tester.enterText(find.byType(TextFormField), 'Salary');
     await tester.tap(find.text('Add category'));
     await pumpUntilFound(tester, find.text('Salary'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip('Add Tags'));
     await tester.pumpAndSettle();
