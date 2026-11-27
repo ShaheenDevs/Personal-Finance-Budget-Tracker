@@ -15,6 +15,8 @@ import 'package:personal_finance_budget_tracker/ui/views/accounts/accounts_view.
     as _i3;
 import 'package:personal_finance_budget_tracker/ui/views/categories_tags/categories_tags_view.dart'
     as _i8;
+import 'package:personal_finance_budget_tracker/ui/views/budgets/budgets_view.dart'
+    as _i9;
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_view.dart'
     as _i2;
 import 'package:personal_finance_budget_tracker/ui/views/transactions/transactions_view.dart'
@@ -31,10 +33,14 @@ class Routes {
 
   static const categoriesTagsView = '/categories-tags-view';
 
+  static const budgetsView = '/budgets-view';
+
   static const all = <String>{
     dashboardView,
     accountsView,
     transactionsView,
+    categoriesTagsView,
+    budgetsView,
   };
 }
 
@@ -55,6 +61,10 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(
       Routes.categoriesTagsView,
       page: _i8.CategoriesTagsView,
+    ),
+    _i1.RouteDef(
+      Routes.budgetsView,
+      page: _i9.BudgetsView,
     ),
   ];
 
@@ -82,6 +92,18 @@ class StackedRouter extends _i1.RouterBase {
           builder: (context) => const _i8.CategoriesTagsView(),
           settings: data,
         ),
+    _i9.BudgetsView: (data) {
+      final args = data.getArgs<BudgetsViewArguments>(
+        orElse: () => const BudgetsViewArguments(),
+      );
+      return _i5.MaterialPageRoute<dynamic>(
+        builder: (context) => _i9.BudgetsView(
+          key: args.key,
+          repository: args.repository,
+        ),
+        settings: data,
+      );
+    },
     _i4.TransactionsView: (data) {
       final args = data.getArgs<TransactionsViewArguments>(
         orElse: () => const TransactionsViewArguments(),
@@ -167,6 +189,34 @@ class TransactionsViewArguments {
 
   @override
   bool operator ==(covariant TransactionsViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.repository == repository;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ repository.hashCode;
+  }
+}
+
+
+class BudgetsViewArguments {
+  const BudgetsViewArguments({
+    this.key,
+    this.repository,
+  });
+
+  final _i5.Key? key;
+
+  final _i6.LocalFinanceRepository? repository;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "repository": "$repository"}';
+  }
+
+  @override
+  bool operator ==(covariant BudgetsViewArguments other) {
     if (identical(this, other)) return true;
     return other.key == key && other.repository == repository;
   }
@@ -305,6 +355,47 @@ extension CategoriesTagsNavigatorStateExtension on _i7.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.categoriesTagsView,
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+}
+
+
+extension BudgetsNavigatorStateExtension on _i7.NavigationService {
+  Future<dynamic> navigateToBudgetsView({
+    _i5.Key? key,
+    _i6.LocalFinanceRepository? repository,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(
+      Routes.budgetsView,
+      arguments: BudgetsViewArguments(key: key, repository: repository),
+      id: routerId,
+      preventDuplicates: preventDuplicates,
+      parameters: parameters,
+      transition: transition,
+    );
+  }
+
+  Future<dynamic> replaceWithBudgetsView({
+    _i5.Key? key,
+    _i6.LocalFinanceRepository? repository,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(
+      Routes.budgetsView,
+      arguments: BudgetsViewArguments(key: key, repository: repository),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
