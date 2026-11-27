@@ -177,6 +177,43 @@ class LocalFinanceRepository {
         );
   }
 
+  Future<int> renameCategory({required String id, required String name}) async {
+    final normalizedName = name.trim();
+    if (normalizedName.isEmpty) {
+      throw ArgumentError.value(name, 'name', 'Category name is required.');
+    }
+    final category = await (_database.select(_database.categories)
+          ..where((row) => row.id.equals(id)))
+        .getSingleOrNull();
+    if (category == null) {
+      throw ArgumentError.value(id, 'id', 'Category not found.');
+    }
+    return (_database.update(_database.categories)
+          ..where((row) => row.id.equals(id)))
+        .write(CategoriesCompanion(name: Value(normalizedName)));
+  }
+
+  Future<int> deleteCategory(String id) async {
+    final category = await (_database.select(_database.categories)
+          ..where((row) => row.id.equals(id)))
+        .getSingleOrNull();
+    if (category == null) {
+      throw ArgumentError.value(id, 'id', 'Category not found.');
+    }
+    if (category.isBuiltIn) {
+      throw StateError('Built-in categories cannot be deleted.');
+    }
+    final linkedTransactions = await (_database.select(_database.transactions)
+          ..where((row) => row.categoryId.equals(id)))
+        .get();
+    if (linkedTransactions.isNotEmpty) {
+      throw StateError('This category is used by transactions and cannot be deleted.');
+    }
+    return (_database.delete(_database.categories)
+          ..where((row) => row.id.equals(id)))
+        .go();
+  }
+
   Stream<List<Tag>> watchTags() {
     return (_database.select(_database.tags)
           ..orderBy([(tag) => OrderingTerm.asc(tag.name)]))
@@ -208,6 +245,40 @@ class LocalFinanceRepository {
             name: normalizedName,
           ),
         );
+  }
+
+  Future<int> renameTag({required String id, required String name}) async {
+    final normalizedName = name.trim();
+    if (normalizedName.isEmpty) {
+      throw ArgumentError.value(name, 'name', 'Tag name is required.');
+    }
+    final tag = await (_database.select(_database.tags)
+          ..where((row) => row.id.equals(id)))
+        .getSingleOrNull();
+    if (tag == null) {
+      throw ArgumentError.value(id, 'id', 'Tag not found.');
+    }
+    return (_database.update(_database.tags)
+          ..where((row) => row.id.equals(id)))
+        .write(TagsCompanion(name: Value(normalizedName)));
+  }
+
+  Future<int> deleteTag(String id) async {
+    final tag = await (_database.select(_database.tags)
+          ..where((row) => row.id.equals(id)))
+        .getSingleOrNull();
+    if (tag == null) {
+      throw ArgumentError.value(id, 'id', 'Tag not found.');
+    }
+    final linkedTransactions = await (_database.select(_database.transactionTags)
+          ..where((row) => row.tagId.equals(id)))
+        .get();
+    if (linkedTransactions.isNotEmpty) {
+      throw StateError('This tag is used by transactions and cannot be deleted.');
+    }
+    return (_database.delete(_database.tags)
+          ..where((row) => row.id.equals(id)))
+        .go();
   }
 
   Stream<List<FinanceTransaction>> watchTransactions({String? accountId}) {
