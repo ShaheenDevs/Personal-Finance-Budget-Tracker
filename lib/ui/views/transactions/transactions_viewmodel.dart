@@ -30,6 +30,86 @@ class TransactionsViewModel extends BaseViewModel {
   List<Tag> tags = [];
   List<TransactionListItem> transactionItems = [];
   String? errorMessage;
+  String searchQuery = '';
+  String selectedType = 'all';
+  String? selectedAccountId;
+  DateTime? dateFrom;
+  DateTime? dateTo;
+  bool newestFirst = true;
+
+  List<TransactionListItem> get filteredTransactionItems {
+    final query = searchQuery.trim().toLowerCase();
+    final items = transactionItems.where((item) {
+      final transaction = item.transaction;
+      if (selectedType != 'all' && transaction.transactionType != selectedType) {
+        return false;
+      }
+      if (selectedAccountId != null && transaction.accountId != selectedAccountId) {
+        return false;
+      }
+      final date = transaction.transactionDate;
+      if (dateFrom != null &&
+          date.isBefore(DateTime(dateFrom!.year, dateFrom!.month, dateFrom!.day))) {
+        return false;
+      }
+      if (dateTo != null &&
+          date.isAfter(DateTime(dateTo!.year, dateTo!.month, dateTo!.day, 23, 59, 59))) {
+        return false;
+      }
+      if (query.isEmpty) return true;
+      final searchable = [
+        transaction.note ?? '',
+        item.accountName,
+        item.categoryName ?? '',
+        transaction.currencyCode,
+        ...item.tagNames,
+      ].join(' ').toLowerCase();
+      return searchable.contains(query);
+    }).toList();
+    items.sort((a, b) {
+      final comparison = a.transaction.transactionDate.compareTo(
+        b.transaction.transactionDate,
+      );
+      return newestFirst ? -comparison : comparison;
+    });
+    return items;
+  }
+
+  void updateSearch(String value) {
+    searchQuery = value;
+    notifyListeners();
+  }
+
+  void updateType(String value) {
+    selectedType = value;
+    notifyListeners();
+  }
+
+  void updateAccount(String? value) {
+    selectedAccountId = value;
+    notifyListeners();
+  }
+
+  void updateDateRange(DateTimeRange? range) {
+    dateFrom = range?.start;
+    dateTo = range?.end;
+    notifyListeners();
+  }
+
+  void toggleSortOrder() {
+    newestFirst = !newestFirst;
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    searchQuery = '';
+    selectedType = 'all';
+    selectedAccountId = null;
+    dateFrom = null;
+    dateTo = null;
+    newestFirst = true;
+    notifyListeners();
+  }
 
   List<Account> get activeAccounts =>
       accounts.where((account) => !account.archived).toList();
