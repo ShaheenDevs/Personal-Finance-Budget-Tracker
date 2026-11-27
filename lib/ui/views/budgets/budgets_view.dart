@@ -378,7 +378,7 @@ class _BudgetFormDialogState extends State<_BudgetFormDialog> {
               DropdownButtonFormField<String>(
                 value: _currencyCode,
                 decoration: const InputDecoration(labelText: 'Currency'),
-                items: widget.viewModel.activeAccounts
+                items: widget.viewModel.accounts
                     .map((account) => account.currencyCode)
                     .toSet()
                     .map((code) => DropdownMenuItem(value: code, child: Text(code)))
@@ -532,10 +532,10 @@ class _RecurringFormDialogState extends State<_RecurringFormDialog> {
             DropdownButtonFormField<String>(
               value: _accountId,
               decoration: const InputDecoration(labelText: 'Account'),
-              items: widget.viewModel.activeAccounts
+              items: widget.viewModel.accounts
                   .map((account) => DropdownMenuItem(
                         value: account.id,
-                        child: Text('${account.name} · ${account.currencyCode}'),
+                        child: Text('${account.name} · ${account.currencyCode}${account.archived ? ' (archived)' : ''}'),
                       ))
                   .toList(),
               onChanged: (value) => setState(() => _accountId = value!),
