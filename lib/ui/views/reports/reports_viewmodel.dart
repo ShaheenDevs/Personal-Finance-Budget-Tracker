@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:personal_finance_budget_tracker/app/app.locator.dart';
 import 'package:personal_finance_budget_tracker/database/app_database.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
@@ -93,7 +95,9 @@ class ReportsViewModel extends BaseViewModel {
     for (final transaction in _transactions) {
       final date = transaction.transactionDate;
       if (transaction.currencyCode != selectedCurrency ||
-          date.isBefore(start) || !date.isBefore(end)) continue;
+          date.isBefore(start) || !date.isBefore(end)) {
+        continue;
+      }
       final weekIndex = ((date.day - 1) ~/ 7).clamp(0, 4).toInt();
       if (transaction.transactionType == 'income') {
         incomeMinorUnits += transaction.amountMinorUnits;
