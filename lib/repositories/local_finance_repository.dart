@@ -281,6 +281,284 @@ class LocalFinanceRepository {
         .go();
   }
 
+
+  Future<List<Budget>> getBudgets() {
+    return (_database.select(_database.budgets)
+          ..orderBy([(budget) => OrderingTerm.desc(budget.startDate)]))
+        .get();
+  }
+
+  Future<int> createBudget({
+    String? categoryId,
+    required int amountMinorUnits,
+    required String currencyCode,
+    required String periodType,
+    required DateTime startDate,
+    DateTime? endDate,
+  }) async {
+    _validateBudget(
+      amountMinorUnits: amountMinorUnits,
+      currencyCode: currencyCode,
+      periodType: periodType,
+      startDate: startDate,
+      endDate: endDate,
+    );
+    if (categoryId != null) {
+      final category = await (_database.select(_database.categories)
+            ..where((row) => row.id.equals(categoryId)))
+          .getSingleOrNull();
+      if (category == null || category.transactionType != 'expense') {
+        throw ArgumentError.value(categoryId, 'categoryId',
+            'Select a valid expense category.');
+      }
+    }
+    final normalizedStart = DateTime(startDate.year, startDate.month,
+        periodType == 'monthly' ? 1 : startDate.day);
+    return _database.into(_database.budgets).insert(
+          BudgetsCompanion.insert(
+            id: _uuid.v4(),
+            categoryId: Value(categoryId),
+            amountMinorUnits: amountMinorUnits,
+            currencyCode: currencyCode.trim().toUpperCase(),
+            periodType: periodType,
+            startDate: normalizedStart,
+            endDate: Value(periodType == 'custom'
+                ? DateTime(endDate!.year, endDate.month, endDate.day)
+                : null),
+          ),
+        );
+  }
+
+  Future<int> updateBudget({
+    required String id,
+    String? categoryId,
+    required int amountMinorUnits,
+    required String currencyCode,
+    required String periodType,
+    required DateTime startDate,
+    DateTime? endDate,
+  }) async {
+    _validateBudget(
+      amountMinorUnits: amountMinorUnits,
+      currencyCode: currencyCode,
+      periodType: periodType,
+      startDate: startDate,
+      endDate: endDate,
+    );
+    final existing = await (_database.select(_database.budgets)
+          ..where((row) => row.id.equals(id)))
+        .getSingleOrNull();
+    if (existing == null) {
+      throw ArgumentError.value(id, 'id', 'Budget not found.');
+    }
+    if (categoryId != null) {
+      final category = await (_database.select(_database.categories)
+            ..where((row) => row.id.equals(categoryId)))
+          .getSingleOrNull();
+      if (category == null || category.transactionType != 'expense') {
+        throw ArgumentError.value(categoryId, 'categoryId',
+            'Select a valid expense category.');
+      }
+    }
+    return (_database.update(_database.budgets)
+          ..where((row) => row.id.equals(id)))
+        .write(BudgetsCompanion(
+      categoryId: Value(categoryId),
+      amountMinorUnits: Value(amountMinorUnits),
+      currencyCode: Value(currencyCode.trim().toUpperCase()),
+      periodType: Value(periodType),
+      startDate: Value(DateTime(startDate.year, startDate.month,
+          periodType == 'monthly' ? 1 : startDate.day)),
+      endDate: Value(periodType == 'custom'
+          ? DateTime(endDate!.year, endDate.month, endDate.day)
+          : null),
+      updatedAt: Value(DateTime.now()),
+    ));
+  }
+
+  Future<int> getBudgetSpentMinorUnits(Budget budget) async {
+    final end = budget.periodType == 'monthly'
+        ? DateTime(budget.startDate.year, budget.startDate.month + 1, 0, 23, 59, 59)
+        : DateTime(budget.endDate!.year, budget.endDate!.month,
+            budget.endDate!.day, 23, 59, 59);
+    final query = _database.select(_database.transactions)
+      ..where((row) =>
+          row.deletedAt.isNull() &
+          row.transactionType.equals('expense') &
+          row.currencyCode.equals(budget.currencyCode) &
+          row.transactionDate.isBiggerOrEqualValue(budget.startDate) &
+          row.transactionDate.isSmallerOrEqualValue(end) &
+          (budget.categoryId == null
+              ? const Constant(true)
+              : row.categoryId.equals(budget.categoryId!)));
+    final transactions = await query.get();
+    return transactions.fold<int>(
+      0,
+      (total, transaction) => total + transaction.amountMinorUnits,
+    );
+  }
+
+  Future<int> deleteBudget(String id) {
+    return (_database.delete(_database.budgets)
+          ..where((row) => row.id.equals(id)))
+        .go();
+  }
+
+  void _validateBudget({
+    required int amountMinorUnits,
+    required String currencyCode,
+    required String periodType,
+    required DateTime startDate,
+    required DateTime? endDate,
+  }) {
+    if (amountMinorUnits <= 0) {
+      throw ArgumentError.value(amountMinorUnits, 'amountMinorUnits',
+          'Budget amount must be greater than zero.');
+    }
+    if (!_isCurrencyCode(currencyCode.trim().toUpperCase())) {
+      throw ArgumentError.value(currencyCode, 'currencyCode',
+          'Use a three-letter ISO currency code.');
+    }
+    if (!{'monthly', 'custom'}.contains(periodType)) {
+      throw ArgumentError.value(periodType, 'periodType',
+          'Budget period must be monthly or custom.');
+    }
+    if (periodType == 'custom' &&
+        (endDate == null || !endDate.isAfter(DateTime(
+          startDate.year, startDate.month, startDate.day - 1,
+        )))) {
+      throw ArgumentError.value(endDate, 'endDate',
+          'Custom period end date must be on or after its start date.');
+    }
+  }
+
+  Future<List<RecurringTransaction>> getRecurringTransactions() {
+    return (_database.select(_database.recurringTransactions)
+          ..orderBy([(row) => OrderingTerm.asc(row.nextDueDate)]))
+        .get();
+  }
+
+  Future<int> createRecurringTransaction({
+    required String accountId,
+    String? categoryId,
+    required String transactionType,
+    required int amountMinorUnits,
+    required String currencyCode,
+    required String frequency,
+    required DateTime nextDueDate,
+    String timeZoneId = 'UTC',
+  }) async {
+    await _validateRecurringInput(
+      accountId: accountId,
+      categoryId: categoryId,
+      transactionType: transactionType,
+      amountMinorUnits: amountMinorUnits,
+      currencyCode: currencyCode,
+      frequency: frequency,
+    );
+    return _database.into(_database.recurringTransactions).insert(
+          RecurringTransactionsCompanion.insert(
+            id: _uuid.v4(),
+            accountId: accountId,
+            categoryId: Value(categoryId),
+            transactionType: transactionType,
+            amountMinorUnits: amountMinorUnits,
+            currencyCode: currencyCode.trim().toUpperCase(),
+            frequency: frequency,
+            nextDueDate: DateTime(
+                nextDueDate.year, nextDueDate.month, nextDueDate.day),
+            timeZoneId: Value(timeZoneId),
+          ),
+        );
+  }
+
+  Future<int> updateRecurringTransaction({
+    required String id,
+    required String accountId,
+    String? categoryId,
+    required String transactionType,
+    required int amountMinorUnits,
+    required String currencyCode,
+    required String frequency,
+    required DateTime nextDueDate,
+  }) async {
+    await _validateRecurringInput(
+      accountId: accountId,
+      categoryId: categoryId,
+      transactionType: transactionType,
+      amountMinorUnits: amountMinorUnits,
+      currencyCode: currencyCode,
+      frequency: frequency,
+    );
+    return (_database.update(_database.recurringTransactions)
+          ..where((row) => row.id.equals(id)))
+        .write(RecurringTransactionsCompanion(
+      accountId: Value(accountId),
+      categoryId: Value(categoryId),
+      transactionType: Value(transactionType),
+      amountMinorUnits: Value(amountMinorUnits),
+      currencyCode: Value(currencyCode.trim().toUpperCase()),
+      frequency: Value(frequency),
+      nextDueDate: Value(DateTime(
+          nextDueDate.year, nextDueDate.month, nextDueDate.day)),
+      updatedAt: Value(DateTime.now()),
+    ));
+  }
+
+  Future<int> setRecurringTransactionActive(String id, bool isActive) {
+    return (_database.update(_database.recurringTransactions)
+          ..where((row) => row.id.equals(id)))
+        .write(RecurringTransactionsCompanion(
+      isActive: Value(isActive),
+      updatedAt: Value(DateTime.now()),
+    ));
+  }
+
+  Future<int> deleteRecurringTransaction(String id) {
+    return (_database.delete(_database.recurringTransactions)
+          ..where((row) => row.id.equals(id)))
+        .go();
+  }
+
+  Future<void> _validateRecurringInput({
+    required String accountId,
+    required String? categoryId,
+    required String transactionType,
+    required int amountMinorUnits,
+    required String currencyCode,
+    required String frequency,
+  }) async {
+    _validateTransactionType(transactionType);
+    if (amountMinorUnits <= 0) {
+      throw ArgumentError.value(amountMinorUnits, 'amountMinorUnits',
+          'Recurring amount must be greater than zero.');
+    }
+    if (!{'daily', 'weekly', 'monthly', 'yearly'}.contains(frequency)) {
+      throw ArgumentError.value(frequency, 'frequency',
+          'Choose daily, weekly, monthly, or yearly.');
+    }
+    final account = await (_database.select(_database.accounts)
+          ..where((row) => row.id.equals(accountId)))
+        .getSingleOrNull();
+    if (account == null || account.archived) {
+      throw ArgumentError.value(accountId, 'accountId',
+          'Select an active account.');
+    }
+    if (account.currencyCode != currencyCode.trim().toUpperCase()) {
+      throw ArgumentError.value(currencyCode, 'currencyCode',
+          'Recurring currency must match the account currency.');
+    }
+    if (categoryId != null) {
+      final category = await (_database.select(_database.categories)
+            ..where((row) => row.id.equals(categoryId)))
+          .getSingleOrNull();
+      if (category == null || category.transactionType != transactionType) {
+        throw ArgumentError.value(categoryId, 'categoryId',
+            'Category must match the recurring transaction type.');
+      }
+    }
+  }
+
   Stream<List<FinanceTransaction>> watchTransactions({String? accountId}) {
     final query = _database.select(_database.transactions)
       ..where(
