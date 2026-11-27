@@ -62,4 +62,46 @@ void main() {
     expect(viewModel.expenseCategories, hasLength(1));
     expect(viewModel.tags, hasLength(1));
   });
+  test('renames categories and tags while retaining their identifiers', () async {
+    await repository.createCategory(name: 'Food', transactionType: 'expense');
+    await repository.createTag(name: 'Work');
+    await viewModel.initialise();
+    final category = viewModel.expenseCategories.single;
+    final tag = viewModel.tags.single;
+    expect(await viewModel.renameCategory(id: category.id, name: 'Groceries'), isTrue);
+    expect(await viewModel.renameTag(id: tag.id, name: 'Office'), isTrue);
+    expect(viewModel.expenseCategories.single.id, category.id);
+    expect(viewModel.expenseCategories.single.name, 'Groceries');
+    expect(viewModel.tags.single.id, tag.id);
+    expect(viewModel.tags.single.name, 'Office');
+  });
+
+  test('blocks deletion of categories and tags linked to transaction history', () async {
+    await repository.createAccount(name: 'Cash', accountType: 'cash', currencyCode: 'PKR');
+    final account = (await repository.getAccounts()).single;
+    await repository.createCategory(name: 'Food', transactionType: 'expense');
+    await repository.createTag(name: 'Essential');
+    final category = (await repository.getCategories()).single;
+    final tag = (await repository.getTags()).single;
+    await repository.createTransaction(accountId: account.id, categoryId: category.id, transactionType: 'expense', amountMinorUnits: 100, currencyCode: 'PKR', transactionDate: DateTime(2026, 2, 1), tagIds: [tag.id]);
+    await viewModel.initialise();
+    expect(await viewModel.deleteCategory(category.id), isFalse);
+    expect(viewModel.errorMessage, contains('used by transactions'));
+    expect(await viewModel.deleteTag(tag.id), isFalse);
+    expect(viewModel.errorMessage, contains('used by transactions'));
+    expect(await repository.getCategories(), hasLength(1));
+    expect(await repository.getTags(), hasLength(1));
+  });
+
+  test('deletes unused custom categories and tags', () async {
+    await repository.createCategory(name: 'Temporary', transactionType: 'expense');
+    await repository.createTag(name: 'Temporary');
+    await viewModel.initialise();
+    final categoryId = viewModel.expenseCategories.single.id;
+    final tagId = viewModel.tags.single.id;
+    expect(await viewModel.deleteCategory(categoryId), isTrue);
+    expect(await viewModel.deleteTag(tagId), isTrue);
+    expect(viewModel.categories, isEmpty);
+    expect(viewModel.tags, isEmpty);
+  });
 }
