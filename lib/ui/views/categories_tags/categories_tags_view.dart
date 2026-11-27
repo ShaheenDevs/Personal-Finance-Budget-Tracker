@@ -124,7 +124,7 @@ class CategoriesTagsView extends StackedView<CategoriesTagsViewModel> {
         label: 'Tag name',
         submitLabel: 'Add tag',
         maxLength: 40,
-        onSubmit: viewModel.addTag,
+        onSubmit: (name) => viewModel.addTag(name: name),
       ),
     );
   }
