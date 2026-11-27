@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:flutter/material.dart';
 import 'package:personal_finance_budget_tracker/ui/views/reports/reports_viewmodel.dart';
 import 'package:stacked/stacked.dart';
