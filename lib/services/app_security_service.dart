@@ -29,9 +29,17 @@ class FlutterSecureKeyValueStore implements SecureKeyValueStore {
 }
 
 class AppSecurityService extends ChangeNotifier {
-  AppSecurityService({SecureKeyValueStore? store, Random? random})
-      : _store = store ?? FlutterSecureKeyValueStore(),
-        _random = random ?? Random.secure();
+  AppSecurityService({
+    SecureKeyValueStore? store,
+    Random? random,
+    int iterations = _iterations,
+  })  : _store = store ?? FlutterSecureKeyValueStore(),
+        _random = random ?? Random.secure(),
+        _pbkdf2 = Pbkdf2(
+          macAlgorithm: Hmac.sha256(),
+          iterations: iterations,
+          bits: 256,
+        );
 
   static const _enabledKey = 'app_lock_enabled';
   static const _saltKey = 'app_lock_pin_salt';
@@ -44,11 +52,7 @@ class AppSecurityService extends ChangeNotifier {
   bool _lockEnabled = false;
   bool get lockEnabled => _lockEnabled;
 
-  final Pbkdf2 _pbkdf2 = Pbkdf2(
-    macAlgorithm: Hmac.sha256(),
-    iterations: _iterations,
-    bits: 256,
-  );
+  final Pbkdf2 _pbkdf2;
 
   Future<bool> get isLockEnabled async {
     final enabled = await _store.read(_enabledKey) == 'true';
