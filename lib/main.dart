@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_finance_budget_tracker/app/app.locator.dart';
 import 'package:personal_finance_budget_tracker/app/app.router.dart';
 import 'package:personal_finance_budget_tracker/app/app_theme.dart';
+import 'package:personal_finance_budget_tracker/services/app_security_service.dart';
 import 'package:personal_finance_budget_tracker/ui/views/app_lock/app_lock_gate.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -12,7 +13,9 @@ Future<void> main() async {
 }
 
 class PersonalFinanceApp extends StatelessWidget {
-  const PersonalFinanceApp({super.key});
+  const PersonalFinanceApp({super.key, this.securityService});
+
+  final AppSecurityService? securityService;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,7 @@ class PersonalFinanceApp extends StatelessWidget {
       navigatorKey: StackedService.navigatorKey,
       navigatorObservers: [StackedService.routeObserver],
       builder: (context, child) => AppLockGate(
+        securityService: securityService,
         child: child ?? const SizedBox.shrink(),
       ),
     );
