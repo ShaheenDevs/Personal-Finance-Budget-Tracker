@@ -54,10 +54,10 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☒ Recurring income/expense definitions (create/edit, activate/pause, delete; no automatic posting or reminders yet)
 - [~] Multiple account types: cash, bank, and digital wallet (repository supports cash, bank, and wallet)
 - [~] Account balance tracking and transaction-account consistency (balance calculation and currency validation implemented; transaction list shows linked account and signed amounts)
-- [~] Transaction search, filters, and sorting (local text search, type/account/date filters, and date sorting implemented; CI verification pending)
+- ☒ Transaction search, filters, and sorting (local text search, type/account/date filters, and date sorting; CI-verified)
 - [~] Financial charts and visual reports (monthly totals, weekly cash-flow bars, and expense-category breakdown implemented and CI-verified)
-- [~] CSV export (offline CSV generation and share flow implemented; CI verification pending)
-- [~] PDF report export (offline PDF generation and share flow implemented; CI verification pending)
+- ☒ CSV export (offline CSV generation, spreadsheet-formula protection, and share flow; CI-verified)
+- ☒ PDF report export (offline PDF generation and share flow; CI-verified)
 - ☐ Application lock
 - ☐ Local data management and privacy controls
 
@@ -79,8 +79,8 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☒ Budget list, creation/editing, progress, and details
 - ☒ Recurring schedule list and editor (manual schedule definitions; automated posting/reminders pending)
 - [~] Reports and charts (monthly income/expense/net totals, weekly cash-flow comparison, and category expense breakdown implemented and CI-verified)
-- [~] Export flow (CSV/PDF share actions implemented; CI verification pending)
-- [~] Search and filter interface (search, type/account/date filters, sort order, and clear filters implemented; CI verification pending)
+- ☒ Export flow (CSV/PDF share actions; CI-verified)
+- ☒ Search and filter interface (search, type/account/date filters, sort order, and clear filters; CI-verified)
 - ☐ App lock setup and unlock
 - ☐ Settings and local data management
 - ☐ Premium feature presentation and entitlement checks
@@ -134,7 +134,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☒ 8 widget tests passed in CI across dashboard, accounts, transactions, category/tag, and budget/recurring screens
 - ☒ 4 budget/recurring ViewModel tests passed in CI
 - ☒ 2 dashboard summary ViewModel tests and 2 monthly report ViewModel tests passed in CI
-- ☐ CSV/PDF export tests
+- ☒ CSV/PDF export tests
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
 - ☐ Android release build verification
@@ -297,7 +297,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
 4. **M4 — Accounts and transaction management:** ☒ account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; category/tag create/list/rename; guarded category/tag deletion; category/tag selection; and CI tests implemented. Richer metadata management and expanded error/retry widget coverage remain future enhancements.
 5. **M5 — Budgets and recurring bills:** ☒ monthly and custom budgets with category/currency-aware spending calculations; recurring income/expense schedule CRUD, frequency and next due date, and pause/activate controls implemented and tested. Automatic transaction posting and reminder notifications remain pending.
-6. **M6 — Dashboard, reports, and exports:** M6a dashboard summaries and financial reports/charts ☒ completed and CI-verified (run `46027386288`; 44 tests and Android debug APK build passed). M6b transaction search/filter, sorting, and offline CSV/PDF exports implemented; CI verification pending.
+6. **M6 — Dashboard, reports, and exports:** ☒ M6a dashboard summaries and reports/charts (run `46027386288`) and M6b transaction search/filter/sort plus offline CSV/PDF exports (run `46030326721`) completed and CI-verified; M6b passed all 46 tests and Android debug APK build.
 7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
 8. **M8 — QA and Android release preparation:** test offline behavior, data integrity, migrations, and release build.
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
@@ -309,14 +309,15 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Added a Stacked Reports screen with month navigation, currency selection, monthly income/expense/net totals, weekly cash-flow comparison bars, and expense totals by category.
 - Added dashboard and report ViewModel tests for current-month calculations, currency separation, date boundaries, and category totals.
 - GitHub Actions verification is pending; features remain marked in progress until code generation, analyzer, tests, and Android debug APK build pass.
-- Search/filter and CSV/PDF exports are still pending as M6b.
+- M6b search/filter and CSV/PDF exports were completed and CI-verified in run `46030326721`.
 
-### 2026-11-27 — M6b transaction search and export implementation
+### 2026-11-27 — M6b transaction search and export (CI-verified)
 - Added local transaction search across notes, account names, category names, currency codes, and tags.
 - Added transaction type, account, and date-range filters, newest/oldest sorting, and a clear-filters action.
 - Added offline CSV generation with quoted fields and spreadsheet-formula prefix protection, plus PDF report generation and native share actions.
 - Added ViewModel tests for search/filter/sort and export tests for CSV content and PDF output.
-- Added `cross_file`, `pdf`, `printing`, and `share_plus` dependencies. CI verification is pending; no test or APK result is claimed yet.
+- Added `cross_file`, `pdf`, `printing`, and `share_plus` dependencies.
+- GitHub Actions run `46030326721` on commit `5a06699c5b22a36c9ded737bf0e1796c97b140e3` passed dependency resolution, Drift/Stacked code generation, `flutter analyze` (`No issues found!`), all 46 tests, and `flutter build apk --debug`.
 
 ### 2026-11-27 — M6a CI verification
 - Confirmed GitHub Actions run `46027386288` on source commit `2c950ff0ce470ab8d85f7718b5a44262b558f714` completed successfully.
