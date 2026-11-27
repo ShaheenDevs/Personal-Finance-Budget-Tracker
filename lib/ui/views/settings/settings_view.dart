@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:personal_finance_budget_tracker/services/app_security_service.dart';
 import 'package:personal_finance_budget_tracker/ui/views/settings/settings_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class SettingsView extends StackedView<SettingsViewModel> {
-  const SettingsView({super.key});
+  const SettingsView({super.key, this.securityService});
+
+  final AppSecurityService? securityService;
 
   @override
-  SettingsViewModel viewModelBuilder(BuildContext context) => SettingsViewModel();
+  SettingsViewModel viewModelBuilder(BuildContext context) =>
+      SettingsViewModel(securityService: securityService);
 
   @override
   void onViewModelReady(SettingsViewModel viewModel) => viewModel.initialise();
