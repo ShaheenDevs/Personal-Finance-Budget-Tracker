@@ -41,10 +41,16 @@ void main() {
     );
     await pumpUntilFound(tester, find.text('No transactions yet'));
 
-    await tester.tap(find.text('Add transaction'));
+    await tester.tap(find.byType(FloatingActionButton));
     await tester.pump();
 
-    expect(find.text('Add transaction'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Add transaction'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Account'), findsOneWidget);
     expect(find.text('Amount'), findsOneWidget);
 
@@ -54,7 +60,7 @@ void main() {
     await pumpUntilFound(tester, find.text('Lunch'));
 
     expect(find.text('-PKR 25.50'), findsOneWidget);
-    expect(find.text('Main account'), findsOneWidget);
+    expect(find.textContaining('Main account'), findsOneWidget);
   });
 
   testWidgets('soft deletes a transaction after confirmation', (tester) async {
