@@ -11,6 +11,7 @@ import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 
 import '../repositories/local_finance_repository.dart';
+import '../services/app_security_service.dart';
 
 final locator = StackedLocator.instance;
 
@@ -23,4 +24,5 @@ Future<void> setupLocator(
 // Register dependencies
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => LocalFinanceRepository());
+  locator.registerLazySingleton(() => AppSecurityService());
 }
