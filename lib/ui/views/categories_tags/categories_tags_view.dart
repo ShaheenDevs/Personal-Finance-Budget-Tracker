@@ -98,123 +98,35 @@ class CategoriesTagsView extends StackedView<CategoriesTagsViewModel> {
     CategoriesTagsViewModel viewModel, {
     required String transactionType,
   }) async {
-    final controller = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-    var saving = false;
     await showDialog<void>(
       context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(
-            'Add ${transactionType == 'income' ? 'income' : 'expense'} category',
-          ),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: controller,
-              autofocus: true,
-              maxLength: 60,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(labelText: 'Category name'),
-              validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Enter a category name'
-                  : null,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: saving ? null : () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: saving
-                  ? null
-                  : () async {
-                      if (!formKey.currentState!.validate()) return;
-                      setDialogState(() => saving = true);
-                      final saved = await viewModel.addCategory(
-                        name: controller.text,
-                        transactionType: transactionType,
-                      );
-                      if (!dialogContext.mounted) return;
-                      if (saved) {
-                        Navigator.pop(dialogContext);
-                      } else {
-                        setDialogState(() => saving = false);
-                      }
-                    },
-              child: saving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Add category'),
-            ),
-          ],
+      builder: (_) => _NameEntryDialog(
+        title: 'Add ${transactionType == 'income' ? 'income' : 'expense'} category',
+        label: 'Category name',
+        submitLabel: 'Add category',
+        maxLength: 60,
+        onSubmit: (name) => viewModel.addCategory(
+          name: name,
+          transactionType: transactionType,
         ),
       ),
     );
-    controller.dispose();
   }
 
   Future<void> _showTagDialog(
     BuildContext context,
     CategoriesTagsViewModel viewModel,
   ) async {
-    final controller = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-    var saving = false;
     await showDialog<void>(
       context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Add tag'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: controller,
-              autofocus: true,
-              maxLength: 40,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(labelText: 'Tag name'),
-              validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Enter a tag name'
-                  : null,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: saving ? null : () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: saving
-                  ? null
-                  : () async {
-                      if (!formKey.currentState!.validate()) return;
-                      setDialogState(() => saving = true);
-                      final saved = await viewModel.addTag(name: controller.text);
-                      if (!dialogContext.mounted) return;
-                      if (saved) {
-                        Navigator.pop(dialogContext);
-                      } else {
-                        setDialogState(() => saving = false);
-                      }
-                    },
-              child: saving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Add tag'),
-            ),
-          ],
-        ),
+      builder: (_) => _NameEntryDialog(
+        title: 'Add tag',
+        label: 'Tag name',
+        submitLabel: 'Add tag',
+        maxLength: 40,
+        onSubmit: viewModel.addTag,
       ),
     );
-    controller.dispose();
   }
 }
 
@@ -313,6 +225,92 @@ class _MessageBanner extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Text(message, style: TextStyle(color: color)),
+    );
+  }
+}
+
+
+class _NameEntryDialog extends StatefulWidget {
+  const _NameEntryDialog({
+    required this.title,
+    required this.label,
+    required this.submitLabel,
+    required this.maxLength,
+    required this.onSubmit,
+  });
+
+  final String title;
+  final String label;
+  final String submitLabel;
+  final int maxLength;
+  final Future<bool> Function(String name) onSubmit;
+
+  @override
+  State<_NameEntryDialog> createState() => _NameEntryDialogState();
+}
+
+class _NameEntryDialogState extends State<_NameEntryDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _controller;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _saving = true);
+    final saved = await widget.onSubmit(_controller.text);
+    if (!mounted) return;
+    if (saved) {
+      Navigator.of(context).pop();
+    } else {
+      setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: Form(
+        key: _formKey,
+        child: TextFormField(
+          controller: _controller,
+          autofocus: true,
+          maxLength: widget.maxLength,
+          textCapitalization: TextCapitalization.words,
+          decoration: InputDecoration(labelText: widget.label),
+          validator: (value) => value == null || value.trim().isEmpty
+              ? 'Enter a name'
+              : null,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _saving ? null : _save,
+          child: _saving
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(widget.submitLabel),
+        ),
+      ],
     );
   }
 }
