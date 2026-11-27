@@ -22,7 +22,10 @@ class MemorySecureStore implements SecureKeyValueStore {
 
 void main() {
   testWidgets('locks on startup and again when app moves to background', (tester) async {
-    final security = AppSecurityService(store: MemorySecureStore());
+    final security = AppSecurityService(
+      store: MemorySecureStore(),
+      iterations: 1000,
+    );
     await security.enableWithPin('135790');
 
     await tester.pumpWidget(
@@ -40,7 +43,8 @@ void main() {
 
     await tester.enterText(find.byType(TextField), '135790');
     await tester.tap(find.text('Unlock'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 2));
     expect(find.text('Private dashboard'), findsOneWidget);
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
