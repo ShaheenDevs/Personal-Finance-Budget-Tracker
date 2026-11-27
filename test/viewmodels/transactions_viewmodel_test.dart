@@ -90,6 +90,45 @@ void main() {
     expect(stored.deletedAt, isNotNull);
   });
 
+  test('searches, filters, and sorts transactions locally', () async {
+    await viewModel.initialise();
+    await viewModel.saveTransaction(
+      accountId: accountId,
+      categoryId: categoryId,
+      transactionType: 'expense',
+      amountMinorUnits: 1500,
+      transactionDate: DateTime(2026, 3, 10),
+      note: 'Groceries',
+    );
+    await viewModel.saveTransaction(
+      accountId: accountId,
+      transactionType: 'income',
+      amountMinorUnits: 50000,
+      transactionDate: DateTime(2026, 3, 15),
+      note: 'Salary',
+    );
+
+    expect(viewModel.filteredTransactionItems, hasLength(2));
+    viewModel.updateType('income');
+    expect(viewModel.filteredTransactionItems, hasLength(1));
+    expect(viewModel.filteredTransactionItems.single.transaction.note, 'Salary');
+
+    viewModel.updateType('all');
+    viewModel.updateSearch('grocer');
+    expect(viewModel.filteredTransactionItems, hasLength(1));
+    expect(viewModel.filteredTransactionItems.single.transaction.transactionType, 'expense');
+
+    viewModel.updateSearch('');
+    viewModel.updateDateRange(start: DateTime(2026, 3, 12), end: DateTime(2026, 3, 20));
+    expect(viewModel.filteredTransactionItems, hasLength(1));
+    expect(viewModel.filteredTransactionItems.single.transaction.note, 'Salary');
+
+    viewModel.clearFilters();
+    expect(viewModel.filteredTransactionItems.first.transaction.note, 'Salary');
+    viewModel.toggleSortOrder();
+    expect(viewModel.filteredTransactionItems.first.transaction.note, 'Groceries');
+  });
+
   test('rejects transactions on archived accounts', () async {
     await repository.archiveAccount(accountId);
     await viewModel.initialise();
