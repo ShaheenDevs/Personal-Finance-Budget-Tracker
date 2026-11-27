@@ -144,7 +144,7 @@ void main() {
     const exporter = TransactionExportService();
     final items = viewModel.filteredTransactionItems;
     final csv = exporter.buildCsv(items);
-    expect(csv, contains('Date,'));
+    expect(csv, contains('"Date","Type"'));
     expect(csv, contains('"\'=SUM(1,2)"'));
     expect(csv, contains('PKR'));
 
