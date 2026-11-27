@@ -40,6 +40,8 @@ void main() {
       transactionDate: DateTime(2026, 4, 1));
 
     await viewModel.loadReport();
+    expect(viewModel.monthLabel, 'March 2026');
+    expect(viewModel.selectedCurrency, 'PKR');
 
     expect(viewModel.incomeMinorUnits, 10000);
     expect(viewModel.expenseMinorUnits, 2500);
