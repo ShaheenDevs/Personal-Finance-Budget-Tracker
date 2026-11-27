@@ -91,7 +91,6 @@ class ReportsViewModel extends BaseViewModel {
       return;
     }
     final start = selectedMonth;
-    final end = DateTime(start.year, start.month + 1);
     for (final transaction in _transactions) {
       final date = transaction.transactionDate;
       if (transaction.currencyCode != selectedCurrency ||
