@@ -261,4 +261,170 @@ void main() {
     );
   });
 
+
+  test('tracks monthly budget spending for matching currency and expenses', () async {
+    await repository.createAccount(
+      name: 'Main cash', accountType: 'cash', currencyCode: 'PKR');
+    final account = (await repository.getAccounts()).single;
+    await repository.createBudget(
+      amountMinorUnits: 100000,
+      currencyCode: 'PKR',
+      periodType: 'monthly',
+      startDate: DateTime(2026, 3, 18),
+    );
+    final budget = (await repository.getBudgets()).single;
+    expect(budget.startDate, DateTime(2026, 3, 1));
+
+    await repository.createTransaction(
+      accountId: account.id,
+      transactionType: 'expense',
+      amountMinorUnits: 25000,
+      currencyCode: 'PKR',
+      transactionDate: DateTime(2026, 3, 5),
+    );
+    await repository.createTransaction(
+      accountId: account.id,
+      transactionType: 'income',
+      amountMinorUnits: 50000,
+      currencyCode: 'PKR',
+      transactionDate: DateTime(2026, 3, 6),
+    );
+    await repository.createTransaction(
+      accountId: account.id,
+      transactionType: 'expense',
+      amountMinorUnits: 90000,
+      currencyCode: 'PKR',
+      transactionDate: DateTime(2026, 4, 1),
+    );
+
+    expect(await repository.getBudgetSpentMinorUnits(budget), 25000);
+  });
+
+  test('custom category budget includes only its date range and category', () async {
+    await repository.createAccount(
+      name: 'Wallet', accountType: 'wallet', currencyCode: 'PKR');
+    final account = (await repository.getAccounts()).single;
+    await repository.createCategory(name: 'Food', transactionType: 'expense');
+    await repository.createCategory(name: 'Travel', transactionType: 'expense');
+    final categories = await repository.getCategories();
+    final food = categories.firstWhere((item) => item.name == 'Food');
+    final travel = categories.firstWhere((item) => item.name == 'Travel');
+    await repository.createBudget(
+      categoryId: food.id,
+      amountMinorUnits: 50000,
+      currencyCode: 'PKR',
+      periodType: 'custom',
+      startDate: DateTime(2026, 3, 10),
+      endDate: DateTime(2026, 3, 20),
+    );
+    final budget = (await repository.getBudgets()).single;
+    for (final entry in [
+      (food.id, DateTime(2026, 3, 10), 10000),
+      (food.id, DateTime(2026, 3, 20), 12000),
+      (food.id, DateTime(2026, 3, 21), 40000),
+      (travel.id, DateTime(2026, 3, 15), 30000),
+    ]) {
+      await repository.createTransaction(
+        accountId: account.id,
+        categoryId: entry.$1,
+        transactionType: 'expense',
+        amountMinorUnits: entry.$3,
+        currencyCode: 'PKR',
+        transactionDate: entry.$2,
+      );
+    }
+    expect(await repository.getBudgetSpentMinorUnits(budget), 22000);
+  });
+
+  test('rejects invalid budget amounts and custom date ranges', () async {
+    expect(
+      () => repository.createBudget(
+        amountMinorUnits: 0,
+        currencyCode: 'PKR',
+        periodType: 'monthly',
+        startDate: DateTime(2026, 3, 1),
+      ),
+      throwsArgumentError,
+    );
+    expect(
+      () => repository.createBudget(
+        amountMinorUnits: 1000,
+        currencyCode: 'PKR',
+        periodType: 'custom',
+        startDate: DateTime(2026, 3, 10),
+        endDate: DateTime(2026, 3, 9),
+      ),
+      throwsArgumentError,
+    );
+  });
+
+  test('creates, pauses, updates, and deletes recurring schedules', () async {
+    await repository.createAccount(
+      name: 'Bank', accountType: 'bank', currencyCode: 'PKR');
+    final account = (await repository.getAccounts()).single;
+    await repository.createCategory(name: 'Rent', transactionType: 'expense');
+    final category = (await repository.getCategories()).single;
+    await repository.createRecurringTransaction(
+      accountId: account.id,
+      categoryId: category.id,
+      transactionType: 'expense',
+      amountMinorUnits: 250000,
+      currencyCode: 'PKR',
+      frequency: 'monthly',
+      nextDueDate: DateTime(2026, 4, 5),
+    );
+    var recurring = (await repository.getRecurringTransactions()).single;
+    expect(recurring.frequency, 'monthly');
+    expect(recurring.isActive, isTrue);
+
+    await repository.setRecurringTransactionActive(recurring.id, false);
+    recurring = (await repository.getRecurringTransactions()).single;
+    expect(recurring.isActive, isFalse);
+
+    await repository.updateRecurringTransaction(
+      id: recurring.id,
+      accountId: account.id,
+      categoryId: category.id,
+      transactionType: 'expense',
+      amountMinorUnits: 300000,
+      currencyCode: 'PKR',
+      frequency: 'weekly',
+      nextDueDate: DateTime(2026, 4, 12),
+    );
+    recurring = (await repository.getRecurringTransactions()).single;
+    expect(recurring.amountMinorUnits, 300000);
+    expect(recurring.frequency, 'weekly');
+
+    await repository.deleteRecurringTransaction(recurring.id);
+    expect(await repository.getRecurringTransactions(), isEmpty);
+  });
+
+  test('rejects recurring schedules with invalid frequency or currency', () async {
+    await repository.createAccount(
+      name: 'Cash', accountType: 'cash', currencyCode: 'PKR');
+    final account = (await repository.getAccounts()).single;
+    expect(
+      () => repository.createRecurringTransaction(
+        accountId: account.id,
+        transactionType: 'expense',
+        amountMinorUnits: 1000,
+        currencyCode: 'PKR',
+        frequency: 'every-so-often',
+        nextDueDate: DateTime(2026, 4, 1),
+      ),
+      throwsArgumentError,
+    );
+    expect(
+      () => repository.createRecurringTransaction(
+        accountId: account.id,
+        transactionType: 'expense',
+        amountMinorUnits: 1000,
+        currencyCode: 'USD',
+        frequency: 'monthly',
+        nextDueDate: DateTime(2026, 4, 1),
+      ),
+      throwsArgumentError,
+    );
+  });
+
 }
