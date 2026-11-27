@@ -94,7 +94,7 @@ class ReportsViewModel extends BaseViewModel {
       final date = transaction.transactionDate;
       if (transaction.currencyCode != selectedCurrency ||
           date.isBefore(start) || !date.isBefore(end)) continue;
-      final weekIndex = ((date.day - 1) ~/ 7).clamp(0, 4);
+      final weekIndex = ((date.day - 1) ~/ 7).clamp(0, 4).toInt();
       if (transaction.transactionType == 'income') {
         incomeMinorUnits += transaction.amountMinorUnits;
         weekly[weekIndex][0] += transaction.amountMinorUnits;
@@ -103,7 +103,7 @@ class ReportsViewModel extends BaseViewModel {
         weekly[weekIndex][1] += transaction.amountMinorUnits;
         final name = transaction.categoryId == null
             ? 'Uncategorized'
-            : (_categoryNames[transaction.categoryId] ?? 'Uncategorized');
+            : (_categoryNames[transaction.categoryId!] ?? 'Uncategorized');
         categories.update(name, (value) => value + transaction.amountMinorUnits,
             ifAbsent: () => transaction.amountMinorUnits);
       }
