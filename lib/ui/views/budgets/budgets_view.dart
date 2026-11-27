@@ -243,10 +243,19 @@ class _RecurringCard extends StatelessWidget {
         ),
         trailing: PopupMenuButton<String>(
           onSelected: (value) async {
-            if (value == 'edit') onEdit();
-            if (value == 'toggle') await viewModel.toggleRecurring(row);
+            if (value == 'edit') {
+              onEdit();
+              return;
+            }
+            if (value == 'toggle') {
+              await viewModel.toggleRecurring(row);
+              return;
+            }
             if (value == 'delete') {
-              final confirmed = await _confirmDelete(context, 'Delete this recurring schedule?');
+              final confirmed = await _confirmDelete(
+                context,
+                'Delete this recurring schedule?',
+              );
               if (!context.mounted) return;
               if (confirmed) await viewModel.deleteRecurring(row.id);
             }
