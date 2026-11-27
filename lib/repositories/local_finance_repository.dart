@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
