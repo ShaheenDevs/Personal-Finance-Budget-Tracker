@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract interface class SecureKeyValueStore {
@@ -27,7 +28,7 @@ class FlutterSecureKeyValueStore implements SecureKeyValueStore {
   Future<void> delete(String key) => _storage.delete(key: key);
 }
 
-class AppSecurityService {
+class AppSecurityService extends ChangeNotifier {
   AppSecurityService({SecureKeyValueStore? store, Random? random})
       : _store = store ?? FlutterSecureKeyValueStore(),
         _random = random ?? Random.secure();
@@ -40,6 +41,9 @@ class AppSecurityService {
 
   final SecureKeyValueStore _store;
   final Random _random;
+  bool _lockEnabled = false;
+  bool get lockEnabled => _lockEnabled;
+
   final Pbkdf2 _pbkdf2 = Pbkdf2(
     macAlgorithm: Hmac.sha256(),
     iterations: _iterations,
@@ -50,7 +54,8 @@ class AppSecurityService {
     final enabled = await _store.read(_enabledKey) == 'true';
     final salt = await _store.read(_saltKey);
     final hash = await _store.read(_hashKey);
-    return enabled && salt != null && hash != null;
+    _lockEnabled = enabled && salt != null && hash != null;
+    return _lockEnabled;
   }
 
   Future<void> enableWithPin(String pin) async {
@@ -62,6 +67,8 @@ class AppSecurityService {
     await _store.write(_saltKey, base64Encode(salt));
     await _store.write(_hashKey, base64Encode(hash));
     await _store.write(_enabledKey, 'true');
+    _lockEnabled = true;
+    notifyListeners();
   }
 
   Future<bool> verifyPin(String pin) async {
@@ -88,6 +95,8 @@ class AppSecurityService {
     await _store.delete(_enabledKey);
     await _store.delete(_saltKey);
     await _store.delete(_hashKey);
+    _lockEnabled = false;
+    notifyListeners();
   }
 
   bool _isValidPin(String pin) =>
