@@ -46,11 +46,11 @@ class TransactionExportService {
               item.transaction.note ?? '',
             ],
         ],
-        headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+        headerStyle: const pw.TextStyle(fontWeight: pw.FontWeight.bold),
         cellStyle: const pw.TextStyle(fontSize: 8),
         cellPadding: const pw.EdgeInsets.all(4),
       ),
-      if (items.isEmpty) const pw.Text('No transactions match the selected filters.'),
+      if (items.isEmpty) pw.Text('No transactions match the selected filters.'),
     ]));
     return document.save();
   }
