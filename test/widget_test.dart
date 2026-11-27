@@ -20,7 +20,7 @@ void main() {
     await tester.pumpWidget(const PersonalFinanceApp());
 
     expect(find.text('Personal Finance'), findsOneWidget);
-    await pumpUntilFound(tester, find.text('Your financial overview starts here'));
+    await pumpUntilFound(tester, find.text('Manage accounts'));
 
     await tester.tap(find.text('Manage accounts'));
     await pumpUntilFound(tester, find.text('Accounts'));
