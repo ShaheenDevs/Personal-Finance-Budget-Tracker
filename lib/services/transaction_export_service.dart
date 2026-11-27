@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'dart:typed_data';
 
 import 'package:pdf/widgets.dart' as pw;
@@ -48,7 +50,7 @@ class TransactionExportService {
         cellStyle: const pw.TextStyle(fontSize: 8),
         cellPadding: const pw.EdgeInsets.all(4),
       ),
-      if (items.isEmpty) pw.Text('No transactions match the selected filters.'),
+      if (items.isEmpty) const pw.Text('No transactions match the selected filters.'),
     ]));
     return document.save();
   }
