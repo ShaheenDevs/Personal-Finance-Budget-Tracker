@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:personal_finance_budget_tracker/services/transaction_export_service.dart';
 import 'package:personal_finance_budget_tracker/app/app_theme.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
 import 'package:personal_finance_budget_tracker/ui/views/transactions/transactions_viewmodel.dart';
@@ -83,14 +89,48 @@ class TransactionsView extends StackedView<TransactionsViewModel> {
                         children: [
                           if (viewModel.errorMessage != null)
                             _ErrorBanner(message: viewModel.errorMessage!),
+                          TextField(
+                            decoration: const InputDecoration(labelText: 'Search transactions', prefixIcon: Icon(Icons.search), border: OutlineInputBorder()),
+                            onChanged: viewModel.updateSearch,
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(spacing: 8, runSpacing: 4, children: [
+                            for (final option in const [('all', 'All'), ('income', 'Income'), ('expense', 'Expense')])
+                              ChoiceChip(label: Text(option.$2), selected: viewModel.selectedType == option.$1, onSelected: (_) => viewModel.updateType(option.$1)),
+                            ActionChip(avatar: const Icon(Icons.date_range, size: 18), label: Text(viewModel.dateFrom == null ? 'Date range' : '${viewModel.dateFrom!.toLocal().toString().split(' ').first} – ${viewModel.dateTo!.toLocal().toString().split(' ').first}'), onPressed: () async {
+                              final range = await showDateRangePicker(context: context, firstDate: DateTime(2000), lastDate: DateTime.now().add(const Duration(days: 3650)), initialDateRange: viewModel.dateFrom == null ? null : DateTimeRange(start: viewModel.dateFrom!, end: viewModel.dateTo!));
+                              if (range != null) viewModel.updateDateRange(start: range.start, end: range.end);
+                            }),
+                            ActionChip(avatar: Icon(viewModel.newestFirst ? Icons.south : Icons.north, size: 18), label: Text(viewModel.newestFirst ? 'Newest' : 'Oldest'), onPressed: viewModel.toggleSortOrder),
+                            ActionChip(label: const Text('Clear filters'), onPressed: viewModel.clearFilters),
+                          ]),
+                          const SizedBox(height: 8),
+                          DropdownButtonFormField<String>(
+                            value: viewModel.selectedAccountId,
+                            decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder(), isDense: true),
+                            items: [
+                              const DropdownMenuItem<String>(value: null, child: Text('All accounts')),
+                              for (final account in viewModel.accounts) DropdownMenuItem(value: account.id, child: Text(account.name)),
+                            ],
+                            onChanged: viewModel.updateAccount,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(children: [
+                            Expanded(child: OutlinedButton.icon(onPressed: () => _exportCsv(context, viewModel), icon: const Icon(Icons.table_view), label: const Text('Export CSV'))),
+                            const SizedBox(width: 8),
+                            Expanded(child: OutlinedButton.icon(onPressed: () => _exportPdf(context, viewModel), icon: const Icon(Icons.picture_as_pdf), label: const Text('Export PDF'))),
+                          ]),
+                          const SizedBox(height: 12),
                           Text(
-                            '${viewModel.transactionItems.length} transactions',
+                            '${viewModel.filteredTransactionItems.length} transactions',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
                           const SizedBox(height: 12),
-                          for (final item in viewModel.transactionItems)
+                          if (viewModel.filteredTransactionItems.isEmpty)
+                            const Padding(padding: EdgeInsets.all(24), child: Text('No transactions match these filters.')),
+                          for (final item in viewModel.filteredTransactionItems)
                             _TransactionCard(
                               item: item,
                               viewModel: viewModel,
@@ -115,6 +155,23 @@ class TransactionsView extends StackedView<TransactionsViewModel> {
     );
   }
 
+  Future<void> _exportCsv(BuildContext context, TransactionsViewModel viewModel) async {
+    try {
+      final csv = const TransactionExportService().buildCsv(viewModel.filteredTransactionItems);
+      await SharePlus.instance.share(ShareParams(files: [XFile.fromData(utf8.encode(csv), mimeType: 'text/csv', name: 'transactions.csv')], subject: 'Transaction export'));
+    } catch (_) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not export the CSV file.')));
+    }
+  }
+
+  Future<void> _exportPdf(BuildContext context, TransactionsViewModel viewModel) async {
+    try {
+      final bytes = await const TransactionExportService().buildPdf(viewModel.filteredTransactionItems);
+      await Printing.sharePdf(bytes: bytes, filename: 'transactions.pdf');
+    } catch (_) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not export the PDF file.')));
+    }
+  }
   Future<void> _showTransactionForm(
     BuildContext context,
     TransactionsViewModel viewModel, {
