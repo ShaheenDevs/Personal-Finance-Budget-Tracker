@@ -55,7 +55,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - [~] Multiple account types: cash, bank, and digital wallet (repository supports cash, bank, and wallet)
 - [~] Account balance tracking and transaction-account consistency (balance calculation and currency validation implemented; transaction list shows linked account and signed amounts)
 - ☐ Transaction search, filters, and sorting
-- ☐ Financial charts and visual reports
+- [~] Financial charts and visual reports (monthly weekly cash-flow bars and expense-category breakdown implemented; CI verification pending)
 - ☐ CSV export
 - ☐ PDF report export
 - ☐ Application lock
@@ -70,7 +70,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☐ Advanced reports and insights
 
 ### Screens and UI
-- [~] Dashboard / overview (initial offline-first landing screen; financial summaries pending)
+- [~] Dashboard / overview (currency-separated account balances and current-month income/expense summaries implemented; CI verification pending)
 - [~] Transactions list and details (list with account/category/tag context, signed amounts, and edit/delete actions)
 - [~] Add/edit income and expense (validated form with account/type/amount/category/date/tags/note)
 - [~] Category management (income/expense category creation, listing, rename, and guarded delete)
@@ -78,7 +78,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - [~] Accounts list and details (list, balances, create/edit, and archive UI implemented; create/archive widget tests pass)
 - ☒ Budget list, creation/editing, progress, and details
 - ☒ Recurring schedule list and editor (manual schedule definitions; automated posting/reminders pending)
-- ☐ Reports and charts
+- [~] Reports and charts (monthly income/expense/net totals, weekly cash-flow comparison, and category expense breakdown implemented; CI verification pending)
 - ☐ Export flow
 - ☐ Search and filter interface
 - ☐ App lock setup and unlock
@@ -133,6 +133,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☒ 3 transaction ViewModel tests passed in CI
 - ☒ 8 widget tests passed in CI across dashboard, accounts, transactions, category/tag, and budget/recurring screens
 - ☒ 4 budget/recurring ViewModel tests passed in CI
+- [~] 2 dashboard summary ViewModel tests and 2 monthly report ViewModel tests added; CI verification pending
 - ☐ CSV/PDF export tests
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
@@ -296,12 +297,19 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
 4. **M4 — Accounts and transaction management:** ☒ account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; category/tag create/list/rename; guarded category/tag deletion; category/tag selection; and CI tests implemented. Richer metadata management and expanded error/retry widget coverage remain future enhancements.
 5. **M5 — Budgets and recurring bills:** ☒ monthly and custom budgets with category/currency-aware spending calculations; recurring income/expense schedule CRUD, frequency and next due date, and pause/activate controls implemented and tested. Automatic transaction posting and reminder notifications remain pending.
-6. **M6 — Dashboard, reports, and exports:** [~] started; dashboard summaries and financial reports/charts are the first sub-phase, followed by transaction search/filter and CSV/PDF exports.
+6. **M6 — Dashboard, reports, and exports:** [~] M6a dashboard summaries and financial reports/charts implemented; CI verification pending. M6b transaction search/filter and CSV/PDF exports remain pending.
 7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
 8. **M8 — QA and Android release preparation:** test offline behavior, data integrity, migrations, and release build.
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-27 — M6a dashboard summaries and financial reports (CI pending)
+- Replaced the dashboard placeholder with currency-separated account balances and current-month income/expense summaries, loading/error/empty states, refresh support, and a Reports navigation entry.
+- Added a Stacked Reports screen with month navigation, currency selection, monthly income/expense/net totals, weekly cash-flow comparison bars, and expense totals by category.
+- Added dashboard and report ViewModel tests for current-month calculations, currency separation, date boundaries, and category totals.
+- GitHub Actions verification is pending; features remain marked in progress until code generation, analyzer, tests, and Android debug APK build pass.
+- Search/filter and CSV/PDF exports are still pending as M6b.
 
 ### 2026-11-27 — M5 CI final verification
 - Confirmed GitHub Actions run `46020514249` completed successfully: dependency resolution, Drift/Stacked code generation, `flutter analyze`, all 40 tests, and Android debug APK build passed.
