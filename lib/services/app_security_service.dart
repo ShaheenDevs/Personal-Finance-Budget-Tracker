@@ -74,8 +74,9 @@ class AppSecurityService extends ChangeNotifier {
   Future<bool> verifyPin(String pin) async {
     final saltValue = await _store.read(_saltKey);
     final hashValue = await _store.read(_hashKey);
-    if (saltValue == null || hashValue == null) return false;
-    if (!_isValidPin(pin)) return false;
+    if (saltValue == null || hashValue == null || !_isValidPin(pin)) {
+      return false;
+    }
 
     try {
       final actual = await _derivePinHash(pin, base64Decode(saltValue));
@@ -100,15 +101,8 @@ class AppSecurityService extends ChangeNotifier {
   }
 
   bool _isValidPin(String pin) =>
-      pin.length == _pinLength && RegExp(r'^\d+
-    final key = await _pbkdf2.deriveKey(
-      secretKey: SecretKey(utf8.encode(pin)),
-      nonce: salt,
-    );
-    return key.extractBytes();
-  }
-}
-).hasMatch(pin);
+      pin.length == _pinLength &&
+      pin.codeUnits.every((unit) => unit >= 48 && unit <= 57);
 
   Future<List<int>> _derivePinHash(String pin, List<int> salt) async {
     final key = await _pbkdf2.deriveKey(
