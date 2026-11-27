@@ -90,9 +90,9 @@ class TransactionsViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void updateDateRange(DateTimeRange? range) {
-    dateFrom = range?.start;
-    dateTo = range?.end;
+  void updateDateRange({DateTime? start, DateTime? end}) {
+    dateFrom = start;
+    dateTo = end;
     notifyListeners();
   }
 
