@@ -42,16 +42,16 @@ Status definitions:
 - ☐ Pending
 - [!] Blocked or requires a decision
 
-The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account, transaction, category, and tag creation/list workflows now have Stacked screens and ViewModels. Category/tag rename and safe delete flows are implemented; budgets, recurring bills, reports, exports, and settings remain pending.
+The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account, transaction, category, and tag creation/list workflows now have Stacked screens and ViewModels. Category/tag rename and safe delete flows are implemented. M5 now has initial budget and recurring schedule repository workflows and Stacked UI; CI verification is pending.
 
 ### Core Features
 - [~] Income transaction creation, editing, deletion, and listing (repository and Stacked UI/ViewModel implemented; tested create/update/soft-delete workflows)
 - [~] Expense transaction creation, editing, deletion, and listing (repository and Stacked UI/ViewModel implemented; tested create/update/soft-delete workflows)
 - [~] Custom transaction categories (income/expense creation, listing, rename, and safe delete; deletion is blocked when transactions reference the category)
 - [~] Tags and transaction tagging (create/list/rename, transaction-form tag selection, atomic tag links, and safe delete; deletion is blocked when transaction history references the tag)
-- ☐ Monthly budgets
-- ☐ Custom-period budgets
-- ☐ Recurring bill definitions and schedules
+- [~] Monthly budgets (create/edit/delete and spending progress; CI verification pending)
+- [~] Custom-period budgets (date range and category-scoped calculations; CI verification pending)
+- [~] Recurring income/expense definitions (create/edit, activate/pause, delete; no automatic posting or reminders yet)
 - [~] Multiple account types: cash, bank, and digital wallet (repository supports cash, bank, and wallet)
 - [~] Account balance tracking and transaction-account consistency (balance calculation and currency validation implemented; transaction list shows linked account and signed amounts)
 - ☐ Transaction search, filters, and sorting
@@ -76,8 +76,8 @@ The Flutter source foundation, native Android scaffold, and local database found
 - [~] Category management (income/expense category creation, listing, rename, and guarded delete)
 - [~] Tag management (tag creation, listing, rename, and guarded delete)
 - [~] Accounts list and details (list, balances, create/edit, and archive UI implemented; create/archive widget tests pass)
-- ☐ Budget list, creation, and details
-- ☐ Recurring bills list and editor
+- [~] Budget list, creation/editing, progress, and details
+- [~] Recurring schedule list and editor (manual schedule definitions; automated posting/reminders pending)
 - ☐ Reports and charts
 - ☐ Export flow
 - ☐ Search and filter interface
@@ -86,7 +86,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☐ Premium feature presentation and entitlement checks
 
 ### Local Database
-- [~] Drift schema v1, code generation, and initial database tests pass in CI; migration coverage remains pending
+- [~] Drift schema v1, code generation, and initial database tests pass in CI; budget and recurring repository tests added, latest CI pending; migration coverage remains pending
 - [~] Accounts table
 - [~] Categories table
 - [~] Tags table and transaction-tag join table
@@ -109,14 +109,14 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☐ Future backup identity and authorization design — only if cloud features are approved
 
 ### Offline Functionality
-- ☐ All core create/read/update/delete flows work offline
+- [~] Budget and recurring definition create/read/update/delete flows use the local SQLite database; full offline QA pending
 - ☐ Dashboard and reports use local data
 - ☐ CSV/PDF generation works locally
 - ☐ No network dependency during normal use
 - ☐ Future sync queue and conflict policy — only in optional sync phase
 
 ### Notifications
-- ☐ Recurring bill reminders and notification behavior to be designed
+- ☐ Recurring bill reminders and notification behavior to be designed; current M5 stores schedules only and does not post transactions or schedule notifications
 - ☐ Permission-denied and notification-disabled states
 
 ### Settings
@@ -281,8 +281,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 | Transactions | [~] Repository workflows, Stacked list/form UI, ViewModel, tag selection, and soft-delete confirmation implemented | N/A | ☒ ViewModel and widget tests pass in CI |
 | Categories and tags | ☒ Repository create/list/rename and guarded delete operations, dedicated Stacked management screen, income/expense grouping, and transaction-form category/tag selection | N/A | ☒ 6 ViewModel tests and 2 widget tests passed in CI |
 | Accounts and balances | [~] Create/update/archive, currency protection, balance calculation, Stacked list/form UI, and retry state implemented | N/A | ☒ Repository/ViewModel/widget tests passed |
-| Budgets | ☐ Pending | N/A | ☐ Pending |
-| Recurring bills | ☐ Pending | N/A | ☐ Pending |
+| Budgets | [~] Monthly/custom budgets, optional expense category, currency-specific spending totals and progress; CI pending | N/A | [~] Repository, ViewModel, and widget tests added; CI pending |
+| Recurring bills | [~] Recurring income/expense schedule CRUD, frequency, next due date, pause/activate; no auto-posting/reminders yet | N/A | [~] Repository, ViewModel, and widget tests added; CI pending |
 | Reports and exports | ☐ Pending | N/A | ☐ Pending |
 | App lock and settings | ☐ Pending | N/A | ☐ Pending |
 | Premium separation | ☐ Pending | N/A | ☐ Pending |
@@ -294,13 +294,21 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 2. **M2 — Flutter project foundation:** ☒ project manifest, analyzer rules, Stacked app setup, routing, locator, theme, dashboard, and Android scaffold committed; analyzer, widget test, and Android debug APK build passed in CI.
 3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
 4. **M4 — Accounts and transaction management:** ☒ account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; category/tag create/list/rename; guarded category/tag deletion; category/tag selection; and CI tests implemented. Richer metadata management and expanded error/retry widget coverage remain future enhancements.
-5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
+5. **M5 — Budgets and recurring bills:** [~] monthly and custom budgets with category/currency-aware spending calculations; recurring income/expense schedule CRUD, frequency and next due date, and pause/activate controls implemented. Automatic transaction posting and reminder notifications remain pending.
 6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
 7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
 8. **M8 — QA and Android release preparation:** test offline behavior, data integrity, migrations, and release build.
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-27 — M5 budgets and recurring schedules (implementation; CI pending)
+- Added local repository operations for monthly and custom-period budgets, including amount/category/currency/date validation, updates, deletion, and spending totals derived from non-deleted expense transactions in the matching currency and date/category scope.
+- Added recurring income/expense schedule operations: create, update, list, activate/pause, and delete; account currency and category type are validated.
+- Added BudgetsViewModel and BudgetsView with budget progress cards, remaining/over-budget amounts, custom date ranges, recurring schedule editor, and pause/activate/delete actions.
+- Added a Dashboard entry point and registered the Stacked route.
+- Added five database/repository tests, four ViewModel tests, and one widget test. Latest GitHub Actions verification is pending.
+- Scope note: recurring entries are definitions only in this milestone. They do not automatically create transactions or schedule notifications; automation and reminders remain future work.
 
 ### 2026-11-27 — M4 category and tag rename/delete
 - Added repository rename operations for categories and tags while preserving stable record IDs.
