@@ -1,6 +1,24 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:personal_finance_budget_tracker/app/app.locator.dart';
 import 'package:personal_finance_budget_tracker/main.dart';
+import 'package:personal_finance_budget_tracker/services/app_security_service.dart';
+
+class MemorySecureStore implements SecureKeyValueStore {
+  final Map<String, String> values = {};
+
+  @override
+  Future<String?> read(String key) async => values[key];
+
+  @override
+  Future<void> write(String key, String value) async {
+    values[key] = value;
+  }
+
+  @override
+  Future<void> delete(String key) async {
+    values.remove(key);
+  }
+}
 
 Future<void> pumpUntilFound(
   WidgetTester tester,
@@ -17,9 +35,10 @@ Future<void> pumpUntilFound(
 void main() {
   testWidgets('dashboard opens the account screen and add-account form', (tester) async {
     await setupLocator();
-    await tester.pumpWidget(const PersonalFinanceApp());
+    final security = AppSecurityService(store: MemorySecureStore());
+    await tester.pumpWidget(PersonalFinanceApp(securityService: security));
 
-    expect(find.text('Personal Finance'), findsOneWidget);
+    await pumpUntilFound(tester, find.text('Personal Finance'));
     await pumpUntilFound(tester, find.text('Manage accounts'));
 
     await tester.tap(find.text('Manage accounts'));
