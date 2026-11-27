@@ -25,12 +25,14 @@ void main() {
     final security = AppSecurityService(store: MemorySecureStore());
     await security.enableWithPin('135790');
 
-    await tester.pumpWidget(MaterialApp(
-      home: AppLockGate(
+    await tester.pumpWidget(
+      MaterialApp(
+        home: AppLockGate(
         securityService: security,
-        child: const Scaffold(body: Text('Private dashboard')),
+          child: const Scaffold(body: Text('Private dashboard')),
+        ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('App locked'), findsOneWidget);
