@@ -131,12 +131,12 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☒ 10 repository/database tests passed in CI
 - ☒ 4 account ViewModel tests passed in CI
 - ☒ 3 transaction ViewModel tests passed in CI
-- ☒ 7 widget tests currently defined across dashboard, accounts, transactions, and category/tag management (latest CI verification pending)
+- ☒ 7 widget tests passed in CI across dashboard, accounts, transactions, and category/tag management
 - ☐ CSV/PDF export tests
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
 - ☐ Android release build verification
-- [~] Previous GitHub Actions run passed dependency resolution, Drift/Stacked code generation, analysis, all 26 tests, and Android debug APK build; latest 30-test run is pending
+- ☒ GitHub Actions run `46017367355` passed dependency resolution, Drift/Stacked code generation, `flutter analyze`, all 30 tests, and Android debug APK build
 
 ### Deployment and Release
 - ☐ App identity, icon, and version configuration
@@ -279,7 +279,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 | Architecture and planning | [~] Documented; initial Stacked app structure committed | N/A | N/A |
 | Local database | ☒ Drift schema v1, eight tables, repository workflows, foreign-key rules, and indexes committed | N/A | ☒ Code generation and 10 database/repository tests passed in CI |
 | Transactions | [~] Repository workflows, Stacked list/form UI, ViewModel, tag selection, and soft-delete confirmation implemented | N/A | ☒ ViewModel and widget tests pass in CI |
-| Categories and tags | [~] Repository create/list/rename and guarded delete operations, dedicated Stacked management screen, income/expense grouping, and transaction-form category/tag selection | N/A | [~] 6 ViewModel tests and 2 widget tests defined; latest CI pending |
+| Categories and tags | ☒ Repository create/list/rename and guarded delete operations, dedicated Stacked management screen, income/expense grouping, and transaction-form category/tag selection | N/A | ☒ 6 ViewModel tests and 2 widget tests passed in CI |
 | Accounts and balances | [~] Create/update/archive, currency protection, balance calculation, Stacked list/form UI, and retry state implemented | N/A | ☒ Repository/ViewModel/widget tests passed |
 | Budgets | ☐ Pending | N/A | ☐ Pending |
 | Recurring bills | ☐ Pending | N/A | ☐ Pending |
@@ -293,7 +293,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 1. **M1 — Repository analysis and project planning:** inspect references and target repository; document architecture, scope, data model, and roadmap.
 2. **M2 — Flutter project foundation:** ☒ project manifest, analyzer rules, Stacked app setup, routing, locator, theme, dashboard, and Android scaffold committed; analyzer, widget test, and Android debug APK build passed in CI.
 3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
-4. **M4 — Accounts and transaction management:** [~] account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; category/tag create/list/rename; guarded category/tag deletion; category/tag selection; and CI tests implemented. Richer metadata management and expanded error/retry widget coverage remain pending.
+4. **M4 — Accounts and transaction management:** ☒ account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; category/tag create/list/rename; guarded category/tag deletion; category/tag selection; and CI tests implemented. Richer metadata management and expanded error/retry widget coverage remain future enhancements.
 5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
 6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
 7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
@@ -307,7 +307,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Added safe deletion rules: categories cannot be deleted while any transaction (including soft-deleted history) references them; tags cannot be deleted while any transaction-tag link remains; built-in categories cannot be deleted.
 - Added rename and delete actions to each category/tag chip, with an editable name dialog and delete confirmation.
 - Added three ViewModel tests for rename, blocked deletion of used records, and deletion of unused custom records; added a widget test for category rename/delete.
-- Latest test suite now contains 30 tests (10 database/repository, 4 account ViewModel, 3 transaction ViewModel, 6 category/tag ViewModel, and 7 widget tests). GitHub Actions verification is pending.
+- GitHub Actions run `46017367355` on source commit `911d43e469e7ac0308220296a113453392ce8fcc` passed Drift/Stacked code generation, `flutter analyze` (`No issues found!`), all 30 tests, and Android debug APK build.
 
 ### 2026-11-27 — M4 category and tag management UI
 - Added `CategoriesTagsViewModel` to load and separate income/expense categories, load tags, create categories/tags, refresh local data, and surface duplicate/validation/storage errors.
@@ -401,7 +401,6 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 ## Pending Work
 - Expand account and transaction screen widget coverage for database-error and retry states, edit flows, and navigation.
-- Expand account and transaction screen widget coverage for database-error and retry states, edit flows, and navigation.
 - Add schema-upgrade migration tests when a future schema version introduces an actual migration path.
 - Implement all planned local-first features.
 - Confirm free-tier account allowance before enforcing an account cap.
@@ -440,7 +439,7 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
-| 2026-11-27 | M4 — Category and tag UI | Added category/tag create/list/rename and guarded deletion, confirmation dialogs, and tests | Latest CI verification pending | Source commits `68efdf99`, `a63f9781`, `b6a6469c`, `a373a45a`, `87d0947d`, `8b9a18a7` |
+| 2026-11-27 | M4 — Category and tag UI | Added category/tag create/list/rename and guarded deletion, confirmation dialogs, and tests | `flutter analyze` passed; all 30 tests passed; Android debug APK built (run `46017367355`) | Source commit `911d43e469e7ac0308220296a113453392ce8fcc` (earlier implementation commits: `68efdf99`, `a63f9781`, `b6a6469c`, `a373a45a`, `87d0947d`, `8b9a18a7`, `f1f38963`) |
 | 2026-11-27 | M4 — Transaction UI and ViewModel | Added transaction list/form, create/edit/soft-delete flows, category/date/tag controls, route and dashboard link, 3 ViewModel and 2 widget tests | `flutter analyze` passed; 22 tests passed; Android debug APK built | `8a24859ac0b30043f0ffa22d2cb063da0d032d5c` (validated run `46010757058`) |
 | 2026-11-27 | M4 — Account UI and ViewModel | Added Stacked accounts screen, create/edit/archive form, dashboard route, loading/error/empty/retry states, four ViewModel tests, and account screen widget coverage | `flutter analyze` passed; 17 tests passed; Android debug APK built | `d2339d52c5c31929e6cb91bea82a47fbc1187175` (validated run `45889491252`) |
 | 2026-11-27 | M4 — Account and transaction repository | Added account/category/tag/transaction operations, balance calculations, validation, tag links, and soft deletion | `flutter analyze` passed; 11 tests passed; Android debug APK built | `d0c057df038d56b482759052d5a2e7c8b0d45603` (validated run `45884874572`) |
