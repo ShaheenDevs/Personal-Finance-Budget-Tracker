@@ -2,6 +2,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:personal_finance_budget_tracker/database/app_database.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
+import 'package:personal_finance_budget_tracker/services/transaction_export_service.dart';
 import 'package:personal_finance_budget_tracker/ui/views/transactions/transactions_viewmodel.dart';
 
 void main() {
@@ -127,6 +128,28 @@ void main() {
     expect(viewModel.filteredTransactionItems.first.transaction.note, 'Salary');
     viewModel.toggleSortOrder();
     expect(viewModel.filteredTransactionItems.first.transaction.note, 'Groceries');
+  });
+
+  test('exports filtered transactions to CSV and PDF bytes', () async {
+    await viewModel.initialise();
+    await viewModel.saveTransaction(
+      accountId: accountId,
+      categoryId: categoryId,
+      transactionType: 'expense',
+      amountMinorUnits: 2550,
+      transactionDate: DateTime(2026, 3, 10),
+      note: '=SUM(1,2)',
+    );
+
+    const exporter = TransactionExportService();
+    final items = viewModel.filteredTransactionItems;
+    final csv = exporter.buildCsv(items);
+    expect(csv, contains('Date,'));
+    expect(csv, contains('"\'=SUM(1,2)"'));
+    expect(csv, contains('PKR'));
+
+    final pdf = await exporter.buildPdf(items);
+    expect(String.fromCharCodes(pdf.take(4)), '%PDF');
   });
 
   test('rejects transactions on archived accounts', () async {
