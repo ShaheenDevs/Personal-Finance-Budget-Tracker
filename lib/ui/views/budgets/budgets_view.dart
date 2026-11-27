@@ -647,7 +647,7 @@ Future<bool> _confirmDelete(BuildContext context, String message) async {
 
 int? _parseMinorUnits(String input) {
   final normalized = input.trim();
-  if (!RegExp(r'^\d+(?:\.\d{1,2})?.hasMatch(normalized)) {
+    if (!RegExp(r'^\d+(?:\.\d{1,2})?$').hasMatch(normalized)) {
     return null;
   }
   final parts = normalized.split('.');
