@@ -25,14 +25,21 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _security = widget.securityService ?? locator<AppSecurityService>();
+    _security.addListener(_onSecurityChanged);
     WidgetsBinding.instance.addObserver(this);
     _loadLockState();
   }
 
   @override
   void dispose() {
+    _security.removeListener(_onSecurityChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _onSecurityChanged() {
+    if (!mounted) return;
+    setState(() => _enabled = _security.lockEnabled);
   }
 
   @override
