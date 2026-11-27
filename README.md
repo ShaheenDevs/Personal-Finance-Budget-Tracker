@@ -81,8 +81,8 @@ The Flutter source foundation, native Android scaffold, and local database found
 - [~] Reports and charts (monthly income/expense/net totals, weekly cash-flow comparison, and category expense breakdown implemented and CI-verified)
 - ☒ Export flow (CSV/PDF share actions; CI-verified)
 - ☒ Search and filter interface (search, type/account/date filters, sort order, and clear filters; CI-verified)
-- ☐ App lock setup and unlock
-- ☐ Settings and local data management
+- [~] App lock setup and unlock (6-digit PIN, salted PBKDF2-SHA256 hash in Android secure storage, and automatic lock when the app backgrounds; CI verification pending)
+- [~] Settings and local data management (app-lock controls implemented; currency, export, and local data preferences remain pending)
 - ☐ Premium feature presentation and entitlement checks
 
 ### Local Database
@@ -121,7 +121,7 @@ The Flutter source foundation, native Android scaffold, and local database found
 
 ### Settings
 - ☐ Currency and number formatting preferences
-- ☐ App lock settings
+- [~] App lock settings (PIN setup/disable and automatic background lock implemented; CI verification pending)
 - ☐ Export and local data management
 - ☐ Premium entitlement display
 - ☐ Backup/sync settings only when those features exist
@@ -286,7 +286,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 | Budgets | ☒ Monthly/custom budgets, optional expense category, currency-specific spending totals and progress | N/A | ☒ Repository, ViewModel, and widget tests passed |
 | Recurring bills | ☒ Recurring income/expense schedule CRUD, frequency, next due date, pause/activate; no auto-posting/reminders yet | N/A | ☒ Repository, ViewModel, and widget tests passed |
 | Reports and exports | ☐ Pending | N/A | ☐ Pending |
-| App lock and settings | ☐ Pending | N/A | ☐ Pending |
+| App lock and settings | [~] PIN setup/unlock, secure storage, background lock, and settings controls implemented | N/A | [~] Security service, settings ViewModel, and lock-gate tests added; CI pending |
 | Premium separation | ☐ Pending | N/A | ☐ Pending |
 | Cloud backup and sync | ☐ Future | ☐ Future | ☐ Future |
 
@@ -298,18 +298,24 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 4. **M4 — Accounts and transaction management:** ☒ account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; category/tag create/list/rename; guarded category/tag deletion; category/tag selection; and CI tests implemented. Richer metadata management and expanded error/retry widget coverage remain future enhancements.
 5. **M5 — Budgets and recurring bills:** ☒ monthly and custom budgets with category/currency-aware spending calculations; recurring income/expense schedule CRUD, frequency and next due date, and pause/activate controls implemented and tested. Automatic transaction posting and reminder notifications remain pending.
 6. **M6 — Dashboard, reports, and exports:** ☒ M6a dashboard summaries and reports/charts (run `46027386288`) and M6b transaction search/filter/sort plus offline CSV/PDF exports (run `46030326721`) completed and CI-verified; M6b passed all 46 tests and Android debug APK build.
-7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
+7. **M7 — Security, settings, and premium separation:** M7a app-lock foundation implemented (CI pending); next add local preferences and centralized premium entitlements.
 8. **M8 — QA and Android release preparation:** test offline behavior, data integrity, migrations, and release build.
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
 
-### 2026-11-27 — M6a dashboard summaries and financial reports (CI pending)
+### 2026-11-27 — M6a dashboard summaries and financial reports (CI-verified)
 - Replaced the dashboard placeholder with currency-separated account balances and current-month income/expense summaries, loading/error/empty states, refresh support, and a Reports navigation entry.
 - Added a Stacked Reports screen with month navigation, currency selection, monthly income/expense/net totals, weekly cash-flow comparison bars, and expense totals by category.
 - Added dashboard and report ViewModel tests for current-month calculations, currency separation, date boundaries, and category totals.
-- GitHub Actions verification is pending; features remain marked in progress until code generation, analyzer, tests, and Android debug APK build pass.
-- M6b search/filter and CSV/PDF exports were completed and CI-verified in run `46030326721`.
+- GitHub Actions run `46027386288` passed code generation, `flutter analyze`, all 44 tests, and Android debug APK build.
+
+### 2026-11-27 — M7a secure app lock implementation (CI pending)
+- Added Android secure-storage-backed PIN setup and verification. The six-digit PIN is salted and derived with PBKDF2-HMAC-SHA256; plaintext PINs are never persisted.
+- Added a lock gate on app startup and when the app moves to the background, plus a PIN unlock screen.
+- Added a Settings screen to enable or disable app lock. Disabling requires the current PIN.
+- Added tests for PIN validation, hashing/verification, lock removal, settings flows, and startup/background lock behavior.
+- CI verification is pending; preferences and premium entitlements remain later M7 work.
 
 ### 2026-11-27 — M6b transaction search and export (CI-verified)
 - Added local transaction search across notes, account names, category names, currency codes, and tags.
@@ -335,7 +341,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 - Added BudgetsViewModel and BudgetsView with budget progress cards, remaining/over-budget amounts, custom date ranges, recurring schedule editor, and pause/activate/delete actions.
 - Added a Dashboard entry point and registered the Stacked route.
 - Added five database/repository tests, four ViewModel tests, and one widget test.
-- GitHub Actions run `46020514249`: code generation passed, `flutter analyze` passed, and all 40 tests passed. Android debug APK build is still running.
+- GitHub Actions run `46020514249` passed code generation, `flutter analyze`, all 40 tests, and Android debug APK build.
 - Scope note: recurring entries are definitions only in this milestone. They do not automatically create transactions or schedule notifications; automation and reminders remain future work.
 
 ### 2026-11-27 — M4 category and tag rename/delete
