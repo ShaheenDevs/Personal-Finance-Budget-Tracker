@@ -48,7 +48,7 @@ void main() {
     expect(viewModel.netMinorUnits, 7500);
     expect(viewModel.categoryExpenses.single.name, 'Food');
     expect(viewModel.categoryExpenses.single.amountMinorUnits, 2500);
-    expect(viewModel.weeklyCashFlow.first.income, 10000);
+    expect(viewModel.weeklyCashFlow[1].income, 10000);
   });
 
   test('changing month recalculates totals without mixing currencies', () async {
