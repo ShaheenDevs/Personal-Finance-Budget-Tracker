@@ -28,7 +28,7 @@ void main() {
   });
 
   test('rejects a PIN that is not exactly six digits', () async {
-    expect(() => service.enableWithPin('1234'), throwsArgumentError);
+    await expectLater(service.enableWithPin('1234'), throwsArgumentError);
     expect(await service.isLockEnabled, isFalse);
   });
 
