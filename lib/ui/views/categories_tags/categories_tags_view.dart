@@ -49,35 +49,41 @@ class CategoriesTagsView extends StackedView<CategoriesTagsViewModel> {
                       title: 'Income categories',
                       subtitle: 'Used when recording money received',
                       icon: Icons.south_west,
-                      items: viewModel.incomeCategories.map((item) => item.name).toList(),
+                      items: viewModel.incomeCategories.map((item) => _ManageableItem(id: item.id, name: item.name)).toList(),
                       emptyText: 'No income categories yet.',
                       onAdd: () => _showCategoryDialog(
                         context,
                         viewModel,
                         transactionType: 'income',
                       ),
+                      onRename: (item) => _showRenameDialog(context, viewModel, item, isCategory: true),
+                      onDelete: (item) => _confirmDelete(context, viewModel, item, isCategory: true),
                     ),
                     const SizedBox(height: 16),
                     _SectionCard(
                       title: 'Expense categories',
                       subtitle: 'Used when recording money spent',
                       icon: Icons.north_east,
-                      items: viewModel.expenseCategories.map((item) => item.name).toList(),
+                      items: viewModel.expenseCategories.map((item) => _ManageableItem(id: item.id, name: item.name)).toList(),
                       emptyText: 'No expense categories yet.',
                       onAdd: () => _showCategoryDialog(
                         context,
                         viewModel,
                         transactionType: 'expense',
                       ),
+                      onRename: (item) => _showRenameDialog(context, viewModel, item, isCategory: true),
+                      onDelete: (item) => _confirmDelete(context, viewModel, item, isCategory: true),
                     ),
                     const SizedBox(height: 16),
                     _SectionCard(
                       title: 'Tags',
                       subtitle: 'Add labels such as Essential, Travel, or Work',
                       icon: Icons.sell_outlined,
-                      items: viewModel.tags.map((item) => item.name).toList(),
+                      items: viewModel.tags.map((item) => _ManageableItem(id: item.id, name: item.name)).toList(),
                       emptyText: 'No tags yet.',
                       onAdd: () => _showTagDialog(context, viewModel),
+                      onRename: (item) => _showRenameDialog(context, viewModel, item, isCategory: false),
+                      onDelete: (item) => _confirmDelete(context, viewModel, item, isCategory: false),
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -113,6 +119,41 @@ class CategoriesTagsView extends StackedView<CategoriesTagsViewModel> {
     );
   }
 
+  Future<void> _showRenameDialog(BuildContext context, CategoriesTagsViewModel viewModel, _ManageableItem item, {required bool isCategory}) async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => _NameEntryDialog(
+        title: isCategory ? 'Rename category' : 'Rename tag',
+        label: isCategory ? 'Category name' : 'Tag name',
+        submitLabel: 'Save',
+        initialValue: item.name,
+        maxLength: isCategory ? 60 : 40,
+        onSubmit: (name) => isCategory
+            ? viewModel.renameCategory(id: item.id, name: name)
+            : viewModel.renameTag(id: item.id, name: name),
+      ),
+    );
+  }
+
+  Future<void> _confirmDelete(BuildContext context, CategoriesTagsViewModel viewModel, _ManageableItem item, {required bool isCategory}) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(isCategory ? 'Delete category?' : 'Delete tag?'),
+        content: Text('Deletion is blocked while existing records use this item.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    if (isCategory) {
+      await viewModel.deleteCategory(item.id);
+    } else {
+      await viewModel.deleteTag(item.id);
+    }
+  }
   Future<void> _showTagDialog(
     BuildContext context,
     CategoriesTagsViewModel viewModel,
@@ -138,14 +179,18 @@ class _SectionCard extends StatelessWidget {
     required this.items,
     required this.emptyText,
     required this.onAdd,
+    required this.onRename,
+    required this.onDelete,
   });
 
   final String title;
   final String subtitle;
   final IconData icon;
-  final List<String> items;
+  final List<_ManageableItem> items;
   final String emptyText;
   final VoidCallback onAdd;
+  final Future<void> Function(_ManageableItem item) onRename;
+  final Future<void> Function(_ManageableItem item) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -197,20 +242,33 @@ class _SectionCard extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: items
-                    .map(
-                      (item) => Chip(
-                        avatar: const Icon(Icons.label_outline, size: 16),
-                        label: Text(item),
-                      ),
-                    )
-                    .toList(),
+                children: items.map((item) => PopupMenuButton<String>(
+                  tooltip: 'Manage ${item.name}',
+                  onSelected: (action) {
+                    if (action == 'rename') onRename(item);
+                    if (action == 'delete') onDelete(item);
+                  },
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(value: 'rename', child: Text('Rename')),
+                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  ],
+                  child: Chip(
+                    avatar: const Icon(Icons.label_outline, size: 16),
+                    label: Text(item.name),
+                  ),
+                )).toList(),
               ),
           ],
         ),
       ),
     );
   }
+}
+
+class _ManageableItem {
+  const _ManageableItem({required this.id, required this.name});
+  final String id;
+  final String name;
 }
 
 class _MessageBanner extends StatelessWidget {
@@ -237,6 +295,7 @@ class _NameEntryDialog extends StatefulWidget {
     required this.submitLabel,
     required this.maxLength,
     required this.onSubmit,
+    this.initialValue = '',
   });
 
   final String title;
@@ -244,6 +303,7 @@ class _NameEntryDialog extends StatefulWidget {
   final String submitLabel;
   final int maxLength;
   final Future<bool> Function(String name) onSubmit;
+  final String initialValue;
 
   @override
   State<_NameEntryDialog> createState() => _NameEntryDialogState();
@@ -257,7 +317,7 @@ class _NameEntryDialogState extends State<_NameEntryDialog> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _controller = TextEditingController(text: widget.initialValue);
   }
 
   @override
