@@ -166,7 +166,6 @@ class BudgetsViewModel extends BaseViewModel {
           currencyCode: account.currencyCode,
           frequency: frequency,
           nextDueDate: nextDueDate,
-          timeZoneId: DateTime.now().timeZoneName,
         );
       } else {
         await _repository.updateRecurringTransaction(
