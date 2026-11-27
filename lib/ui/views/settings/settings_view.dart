@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:personal_finance_budget_tracker/services/app_security_service.dart';
