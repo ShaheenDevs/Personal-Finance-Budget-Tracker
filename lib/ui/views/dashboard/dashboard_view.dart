@@ -99,6 +99,14 @@ class DashboardView extends StackedView<DashboardViewModel> {
               icon: const Icon(Icons.category_outlined),
               label: const Text('Manage categories & tags'),
             ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => locator<NavigationService>().navigateTo(
+                Routes.budgetsView,
+              ),
+              icon: const Icon(Icons.savings_outlined),
+              label: const Text('Budgets & recurring'),
+            ),
             const SizedBox(height: 16),
             const _FoundationNote(),
           ],
