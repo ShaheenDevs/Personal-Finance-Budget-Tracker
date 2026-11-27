@@ -42,7 +42,7 @@ Status definitions:
 - ☐ Pending
 - [!] Blocked or requires a decision
 
-The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account, transaction, category, and tag workflows are implemented. M5 budget and recurring schedule workflows are implemented and all 40 tests pass in CI; Android debug APK build is still running.
+The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account, transaction, category, and tag workflows are implemented. M5 budget and recurring schedule workflows are implemented and verified in CI; all 40 tests pass and the Android debug APK builds successfully.
 
 ### Core Features
 - [~] Income transaction creation, editing, deletion, and listing (repository and Stacked UI/ViewModel implemented; tested create/update/soft-delete workflows)
@@ -296,12 +296,17 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
 4. **M4 — Accounts and transaction management:** ☒ account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; category/tag create/list/rename; guarded category/tag deletion; category/tag selection; and CI tests implemented. Richer metadata management and expanded error/retry widget coverage remain future enhancements.
 5. **M5 — Budgets and recurring bills:** ☒ monthly and custom budgets with category/currency-aware spending calculations; recurring income/expense schedule CRUD, frequency and next due date, and pause/activate controls implemented and tested. Automatic transaction posting and reminder notifications remain pending.
-6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
+6. **M6 — Dashboard, reports, and exports:** [~] started; dashboard summaries and financial reports/charts are the first sub-phase, followed by transaction search/filter and CSV/PDF exports.
 7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
 8. **M8 — QA and Android release preparation:** test offline behavior, data integrity, migrations, and release build.
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-27 — M5 CI final verification
+- Confirmed GitHub Actions run `46020514249` completed successfully: dependency resolution, Drift/Stacked code generation, `flutter analyze`, all 40 tests, and Android debug APK build passed.
+- Confirmed the subsequent README-triggered run `46021090162` also completed successfully with the same validation steps.
+- M5 is fully CI-verified; no local Flutter SDK/device verification has been performed in this environment.
 
 ### 2026-11-27 — M5 budgets and recurring schedules
 - Added local repository operations for monthly and custom-period budgets, including amount/category/currency/date validation, updates, deletion, and spending totals derived from non-deleted expense transactions in the matching currency and date/category scope.
