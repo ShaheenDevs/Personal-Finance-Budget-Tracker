@@ -145,7 +145,7 @@ class CategoriesTagsViewModel extends BaseViewModel {
     if (error is ArgumentError) {
       return error.toString().replaceFirst('Invalid argument(s): ', '');
     }
-    if (error is StateError) return error.message;
+    if (error is StateError) return error.message.toString();
     return 'Could not update this $item. It may already exist.';
   }
 
