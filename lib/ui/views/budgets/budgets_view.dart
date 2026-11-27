@@ -646,9 +646,21 @@ Future<bool> _confirmDelete(BuildContext context, String message) async {
 }
 
 int? _parseMinorUnits(String input) {
-  final value = double.tryParse(input.trim());
-  if (value == null || !value.isFinite || value <= 0) return null;
-  return (value * 100).round();
+  final normalized = input.trim();
+  if (!RegExp(r'^\\d+(?:\\.\\d{1,2})?
+
+String _date(DateTime date) =>
+    '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+).hasMatch(normalized)) {
+    return null;
+  }
+  final parts = normalized.split('.');
+  final whole = int.tryParse(parts.first);
+  if (whole == null) return null;
+  final fraction = parts.length == 1
+      ? 0
+      : int.parse(parts[1].padRight(2, '0'));
+  return whole * 100 + fraction;
 }
 
 String _date(DateTime date) =>
