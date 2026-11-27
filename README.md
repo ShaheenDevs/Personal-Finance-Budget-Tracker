@@ -42,13 +42,13 @@ Status definitions:
 - ☐ Pending
 - [!] Blocked or requires a decision
 
-The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account and transaction repository workflows, Stacked screens, and ViewModels are implemented. Category/tag management screens, budgets, recurring bills, reports, exports, and settings remain pending.
+The Flutter source foundation, native Android scaffold, and local database foundation are committed. Account, transaction, category, and tag creation/list workflows now have Stacked screens and ViewModels. Category/tag rename and archive/delete flows, budgets, recurring bills, reports, exports, and settings remain pending.
 
 ### Core Features
 - [~] Income transaction creation, editing, deletion, and listing (repository and Stacked UI/ViewModel implemented; tested create/update/soft-delete workflows)
 - [~] Expense transaction creation, editing, deletion, and listing (repository and Stacked UI/ViewModel implemented; tested create/update/soft-delete workflows)
-- [~] Custom transaction categories (repository creation and type validation implemented; UI pending)
-- [~] Tags and transaction tagging (repository creation, atomic transaction links, and transaction-form tag selection implemented; dedicated tag management UI pending)
+- [~] Custom transaction categories (income/expense creation and listing UI implemented; rename/delete and richer metadata management pending)
+- [~] Tags and transaction tagging (create/list UI, transaction-form tag selection, and atomic tag links implemented; rename/delete and richer metadata management pending)
 - ☐ Monthly budgets
 - ☐ Custom-period budgets
 - ☐ Recurring bill definitions and schedules
@@ -73,8 +73,8 @@ The Flutter source foundation, native Android scaffold, and local database found
 - [~] Dashboard / overview (initial offline-first landing screen; financial summaries pending)
 - [~] Transactions list and details (list with account/category/tag context, signed amounts, and edit/delete actions)
 - [~] Add/edit income and expense (validated form with account/type/amount/category/date/tags/note)
-- ☐ Category management
-- ☐ Tag management
+- [~] Category management (income/expense category creation and listing)
+- [~] Tag management (tag creation and listing)
 - [~] Accounts list and details (list, balances, create/edit, and archive UI implemented; create/archive widget tests pass)
 - ☐ Budget list, creation, and details
 - ☐ Recurring bills list and editor
@@ -131,12 +131,12 @@ The Flutter source foundation, native Android scaffold, and local database found
 - ☒ 10 repository/database tests passed in CI
 - ☒ 4 account ViewModel tests passed in CI
 - ☒ 3 transaction ViewModel tests passed in CI
-- ☒ 5 widget tests passed in CI across dashboard, accounts, and transactions
+- ☒ 6 widget tests passed in CI across dashboard, accounts, transactions, and category/tag management
 - ☐ CSV/PDF export tests
 - ☐ Offline behavior tests
 - ☐ Migration and data-integrity tests
 - ☐ Android release build verification
-- ☒ GitHub Actions passes dependency resolution, Drift/Stacked code generation, analysis, all 22 tests, and Android debug APK build
+- ☒ GitHub Actions passes dependency resolution, Drift/Stacked code generation, analysis, all 26 tests, and Android debug APK build
 
 ### Deployment and Release
 - ☐ App identity, icon, and version configuration
@@ -228,10 +228,13 @@ The initial Drift schema is now defined in `lib/database/tables/`. Schema versio
 - `lib/repositories/local_finance_repository.dart` — account/category/tag CRUD starter operations, transaction create/update/soft-delete, transaction-tag links, and balance calculations.
 - `lib/ui/views/accounts/accounts_view.dart` and `accounts_viewmodel.dart` — account list, balances, create/edit/archive flows, loading/empty/error states, and retry action.
 - `lib/ui/views/transactions/transactions_view.dart` and `transactions_viewmodel.dart` — transaction list, account/category/tag context, create/edit form, date selection, soft-delete confirmation, and error handling.
-- `lib/app/app.locator.dart`, `app.dart`, and `app.router.dart` — repository registration and dashboard/accounts/transactions routes.
+- `lib/ui/views/categories_tags/categories_tags_view.dart` and `categories_tags_viewmodel.dart` — offline income/expense category and tag listing/creation with validation, duplicate handling, loading/error/success states.
+- `lib/app/app.locator.dart`, `app.dart`, and `app.router.dart` — repository registration and dashboard/accounts/transactions/category-tag routes.
 - `test/database/app_database_test.dart` — 10 in-memory database/repository tests.
 - `test/viewmodels/accounts_viewmodel_test.dart` — 4 account ViewModel tests.
 - `test/viewmodels/transactions_viewmodel_test.dart` — 3 transaction ViewModel tests.
+- `test/viewmodels/categories_tags_viewmodel_test.dart` — 3 category/tag ViewModel tests.
+- `test/widgets/categories_tags_view_test.dart` — category and tag creation UI test.
 - `test/widgets/accounts_view_test.dart` — account balance, create, and archive widget tests.
 - `test/widgets/transactions_view_test.dart` — transaction create and soft-delete widget tests.
 - `test/widget_test.dart` — dashboard navigation/widget test.
@@ -276,7 +279,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 | Architecture and planning | [~] Documented; initial Stacked app structure committed | N/A | N/A |
 | Local database | ☒ Drift schema v1, eight tables, repository workflows, foreign-key rules, and indexes committed | N/A | ☒ Code generation and 10 database/repository tests passed in CI |
 | Transactions | [~] Repository workflows, Stacked list/form UI, ViewModel, tag selection, and soft-delete confirmation implemented | N/A | ☒ ViewModel and widget tests pass in CI |
-| Categories and tags | [~] Repository CRUD starter operations and transaction-form category/tag selection; dedicated management screens pending | N/A | ☒ Relationship and transaction tests pass in CI |
+| Categories and tags | [~] Repository create/list operations, dedicated Stacked create/list screen, income/expense grouping, and transaction-form category/tag selection | N/A | ☒ 3 ViewModel tests and 1 widget test pass in CI |
 | Accounts and balances | [~] Create/update/archive, currency protection, balance calculation, Stacked list/form UI, and retry state implemented | N/A | ☒ Repository/ViewModel/widget tests passed |
 | Budgets | ☐ Pending | N/A | ☐ Pending |
 | Recurring bills | ☐ Pending | N/A | ☐ Pending |
@@ -290,7 +293,7 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 1. **M1 — Repository analysis and project planning:** inspect references and target repository; document architecture, scope, data model, and roadmap.
 2. **M2 — Flutter project foundation:** ☒ project manifest, analyzer rules, Stacked app setup, routing, locator, theme, dashboard, and Android scaffold committed; analyzer, widget test, and Android debug APK build passed in CI.
 3. **M3 — Local database foundation:** ☒ Drift dependencies, schema v1, eight table definitions, foreign keys, indexes, repository starter methods, and in-memory tests implemented; code generation and all 6 database tests passed in CI. Upgrade-migration tests will be added with the next schema version, when a real migration path exists.
-4. **M4 — Accounts and transaction management:** [~] account and transaction repositories, account/transaction Stacked screens and ViewModels, account create/edit/archive, transaction create/edit/soft-delete, category selection, tag selection, and CI tests implemented. Dedicated category/tag management screens remain pending.
+4. **M4 — Accounts and transaction management:** [~] account, transaction, category, and tag repositories; Stacked screens and ViewModels; account create/edit/archive; transaction create/edit/soft-delete; income/expense category creation; tag creation; category/tag selection; and CI tests implemented. Category/tag rename/delete and richer management remain pending.
 5. **M5 — Budgets and recurring bills:** implement budget calculations and recurring schedule management.
 6. **M6 — Dashboard, reports, and exports:** implement summaries, charts, search/filtering, CSV, and PDF exports.
 7. **M7 — Security, settings, and premium separation:** implement app lock, preferences, and centralized premium entitlements.
@@ -298,6 +301,14 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 9. **M9 — Optional cloud phase:** only after separate approval, design and implement encrypted backup and multi-device sync.
 
 ## Completed Work
+
+### 2026-11-27 — M4 category and tag management UI
+- Added `CategoriesTagsViewModel` to load and separate income/expense categories, load tags, create categories/tags, refresh local data, and surface duplicate/validation/storage errors.
+- Added `CategoriesTagsView` with separate income category, expense category, and tag sections; add dialogs validate names and show saving/error states.
+- Added the Categories & Tags route and Dashboard entry point. The transaction form already consumes the created categories and tags.
+- Added three ViewModel tests covering category grouping, category/tag creation, and duplicate handling, plus a widget test covering category and tag creation.
+- Fixed a dialog lifecycle issue discovered by CI: text controllers are now owned by the dialog State and disposed only when the dialog widget is removed.
+- GitHub Actions run `46013962420` on source commit `6d703fefb15dbc7b9b13daae90ab39778441f0fe` passed code generation, `flutter analyze` (`No issues found!`), all 26 tests, and `flutter build apk --debug`.
 
 ### 2026-11-27 — M4 transaction management UI
 - Added `TransactionsViewModel` to load transactions with linked account, category, and tag labels; create/update transactions; soft-delete records; and surface validation or storage errors.
@@ -383,7 +394,8 @@ Premium gating will be centralized in an entitlement/service layer rather than s
 
 ## Pending Work
 - Expand account and transaction screen widget coverage for database-error and retry states, edit flows, and navigation.
-- Add dedicated category and tag management screens/ViewModels.
+- Add category/tag rename and archive/delete workflows with safeguards for categories already used by transactions.
+- Expand account and transaction screen widget coverage for database-error and retry states, edit flows, and navigation.
 - Add schema-upgrade migration tests when a future schema version introduces an actual migration path.
 - Implement all planned local-first features.
 - Confirm free-tier account allowance before enforcing an account cap.
@@ -422,6 +434,7 @@ The logical entities and relationships are documented in Local Data Model above.
 
 | Date | Milestone | Changes | Tests | Commit |
 |---|---|---|---|---|
+| 2026-11-27 | M4 — Category and tag UI | Added category/tag creation and listing screen, grouped income/expense categories, dashboard route, 3 ViewModel tests and 1 widget test | `flutter analyze` passed; 26 tests passed; Android debug APK built | `6d703fefb15dbc7b9b13daae90ab39778441f0fe` (validated run `46013962420`) |
 | 2026-11-27 | M4 — Transaction UI and ViewModel | Added transaction list/form, create/edit/soft-delete flows, category/date/tag controls, route and dashboard link, 3 ViewModel and 2 widget tests | `flutter analyze` passed; 22 tests passed; Android debug APK built | `8a24859ac0b30043f0ffa22d2cb063da0d032d5c` (validated run `46010757058`) |
 | 2026-11-27 | M4 — Account UI and ViewModel | Added Stacked accounts screen, create/edit/archive form, dashboard route, loading/error/empty/retry states, four ViewModel tests, and account screen widget coverage | `flutter analyze` passed; 17 tests passed; Android debug APK built | `d2339d52c5c31929e6cb91bea82a47fbc1187175` (validated run `45889491252`) |
 | 2026-11-27 | M4 — Account and transaction repository | Added account/category/tag/transaction operations, balance calculations, validation, tag links, and soft deletion | `flutter analyze` passed; 11 tests passed; Android debug APK built | `d0c057df038d56b482759052d5a2e7c8b0d45603` (validated run `45884874572`) |
