@@ -140,7 +140,7 @@ class CategoriesTagsView extends StackedView<CategoriesTagsViewModel> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(isCategory ? 'Delete category?' : 'Delete tag?'),
-        content: Text('Deletion is blocked while existing records use this item.'),
+        content: const Text('Deletion is blocked while existing records use this item.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
           FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Delete')),
@@ -154,6 +154,7 @@ class CategoriesTagsView extends StackedView<CategoriesTagsViewModel> {
       await viewModel.deleteTag(item.id);
     }
   }
+
   Future<void> _showTagDialog(
     BuildContext context,
     CategoriesTagsViewModel viewModel,
@@ -242,21 +243,31 @@ class _SectionCard extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: items.map((item) => PopupMenuButton<String>(
-                  tooltip: 'Manage ${item.name}',
-                  onSelected: (action) {
-                    if (action == 'rename') onRename(item);
-                    if (action == 'delete') onDelete(item);
-                  },
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'rename', child: Text('Rename')),
-                    PopupMenuItem(value: 'delete', child: Text('Delete')),
-                  ],
-                  child: Chip(
-                    avatar: const Icon(Icons.label_outline, size: 16),
-                    label: Text(item.name),
-                  ),
-                )).toList(),
+                children: items
+                    .map(
+                      (item) => PopupMenuButton<String>(
+                        tooltip: 'Manage ${item.name}',
+                        onSelected: (action) {
+                          if (action == 'rename') onRename(item);
+                          if (action == 'delete') onDelete(item);
+                        },
+                        itemBuilder: (_) => const [
+                          PopupMenuItem(
+                            value: 'rename',
+                            child: Text('Rename'),
+                          ),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Text('Delete'),
+                          ),
+                        ],
+                        child: Chip(
+                          avatar: const Icon(Icons.label_outline, size: 16),
+                          label: Text(item.name),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
           ],
         ),
