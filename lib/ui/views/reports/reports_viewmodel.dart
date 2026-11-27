@@ -95,7 +95,7 @@ class ReportsViewModel extends BaseViewModel {
     for (final transaction in _transactions) {
       final date = transaction.transactionDate;
       if (transaction.currencyCode != selectedCurrency ||
-          date.isBefore(start) || !date.isBefore(end)) {
+          date.year != start.year || date.month != start.month) {
         continue;
       }
       final weekIndex = ((date.day - 1) ~/ 7).clamp(0, 4).toInt();
