@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance_budget_tracker/database/app_database.dart';
+import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
 import 'package:personal_finance_budget_tracker/ui/views/budgets/budgets_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 
 class BudgetsView extends StackedView<BudgetsViewModel> {
-  const BudgetsView({super.key});
+  const BudgetsView({super.key, this.repository});
+
+  final LocalFinanceRepository? repository;
 
   @override
-  BudgetsViewModel viewModelBuilder(BuildContext context) => BudgetsViewModel();
+  BudgetsViewModel viewModelBuilder(BuildContext context) =>
+      BudgetsViewModel(repository: repository);
 
   @override
   void onViewModelReady(BudgetsViewModel viewModel) => viewModel.initialise();
