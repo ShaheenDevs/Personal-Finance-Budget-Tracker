@@ -54,7 +54,7 @@ class AppSecurityService {
   }
 
   Future<void> enableWithPin(String pin) async {
-    if (!RegExp(r'^\d{6}$').hasMatch(pin)) {
+    if (!_isValidPin(pin)) {
       throw ArgumentError.value(pin, 'pin', 'PIN must contain exactly 6 digits.');
     }
     final salt = List<int>.generate(16, (_) => _random.nextInt(256));
@@ -68,7 +68,7 @@ class AppSecurityService {
     final saltValue = await _store.read(_saltKey);
     final hashValue = await _store.read(_hashKey);
     if (saltValue == null || hashValue == null) return false;
-    if (!RegExp(r'^\d{6}$').hasMatch(pin)) return false;
+    if (!_isValidPin(pin)) return false;
 
     try {
       final actual = await _derivePinHash(pin, base64Decode(saltValue));
@@ -89,6 +89,17 @@ class AppSecurityService {
     await _store.delete(_saltKey);
     await _store.delete(_hashKey);
   }
+
+  bool _isValidPin(String pin) =>
+      pin.length == _pinLength && RegExp(r'^\d+
+    final key = await _pbkdf2.deriveKey(
+      secretKey: SecretKey(utf8.encode(pin)),
+      nonce: salt,
+    );
+    return key.extractBytes();
+  }
+}
+).hasMatch(pin);
 
   Future<List<int>> _derivePinHash(String pin, List<int> salt) async {
     final key = await _pbkdf2.deriveKey(
