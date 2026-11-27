@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:personal_finance_budget_tracker/app/app.locator.dart';
 import 'package:personal_finance_budget_tracker/database/app_database.dart';
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
