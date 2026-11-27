@@ -1,4 +1,6 @@
 import 'package:personal_finance_budget_tracker/repositories/local_finance_repository.dart';
+import 'package:personal_finance_budget_tracker/services/app_security_service.dart';
+import 'package:personal_finance_budget_tracker/ui/views/settings/settings_view.dart';
 import 'package:personal_finance_budget_tracker/ui/views/accounts/accounts_view.dart';
 import 'package:personal_finance_budget_tracker/ui/views/dashboard/dashboard_view.dart';
 import 'package:personal_finance_budget_tracker/ui/views/categories_tags/categories_tags_view.dart';
@@ -18,10 +20,12 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: CategoriesTagsView),
     MaterialRoute(page: BudgetsView),
     MaterialRoute(page: ReportsView),
+    MaterialRoute(page: SettingsView),
   ],
   dependencies: [
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: LocalFinanceRepository),
+    LazySingleton(classType: AppSecurityService),
   ],
 )
 class App {}
