@@ -47,8 +47,9 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     expect(find.text('Private dashboard'), findsOneWidget);
 
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
-    await tester.pumpAndSettle();
+    final gateState = tester.state(find.byType(AppLockGate));
+    (gateState as dynamic).didChangeAppLifecycleState(AppLifecycleState.paused);
+    await tester.pump();
     expect(find.text('App locked'), findsOneWidget);
   });
 }
