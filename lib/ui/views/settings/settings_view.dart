@@ -50,7 +50,7 @@ class SettingsView extends StackedView<SettingsViewModel> {
           ),
         ],
       ),
-    ).whenComplete(controller.dispose);
+    );
   }
 
   @override
